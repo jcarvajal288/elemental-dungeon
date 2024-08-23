@@ -19,7 +19,14 @@ public class Map
             _grid.Add(new List<Tile>());
             for (int x = 0; x < width; x++)
             {
-                _grid[y].Add(new Tile(Terrain.Wall, rng.Next(0, 4)));     
+                if (rng.Next(0, 20) == 0)
+                {
+                    _grid[y].Add(new Tile(Terrain.CrystalLightBlue, 0));     
+                }
+                else
+                {
+                    _grid[y].Add(new Tile(Terrain.OrcWall, rng.Next(0, 4)));     
+                }
             }
         }
     }
@@ -32,7 +39,7 @@ public class Map
             {
                 Tile tile = _grid[y][x];
                 Vector2 position = new Vector2(x * TileSize, y * TileSize);
-                spriteBatch.Draw(Images.OrcWall(tile.SpriteIndex), position, Color.White);
+                spriteBatch.Draw(tile.getSprite(), position, Color.White);
             }
         }
 
