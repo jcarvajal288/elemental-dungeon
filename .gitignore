@@ -1,0 +1,7 @@
+.idea/
+*.suo
+*.user
+*.vscc
+*.userprefs
+**/bin/
+**/obj/
