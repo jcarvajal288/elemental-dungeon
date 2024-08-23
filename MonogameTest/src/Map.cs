@@ -21,11 +21,11 @@ public class Map
             {
                 if (rng.Next(0, 20) == 0)
                 {
-                    _grid[y].Add(new Tile(Terrain.CrystalLightBlue, 0));     
+                    _grid[y].Add(Tile.CreateCrystalWallLightBlueTile());     
                 }
                 else
                 {
-                    _grid[y].Add(new Tile(Terrain.OrcWall, rng.Next(0, 4)));     
+                    _grid[y].Add(Tile.CreateOrcWallTile());     
                 }
             }
         }
@@ -39,9 +39,20 @@ public class Map
             {
                 Tile tile = _grid[y][x];
                 Vector2 position = new Vector2(x * TileSize, y * TileSize);
-                spriteBatch.Draw(tile.getSprite(), position, Color.White);
+                tile.Draw(spriteBatch, position);
             }
         }
 
+    }
+
+    public void DigRoom(int x, int y, int width, int height)
+    {
+        for (int b = y; b < y + height; b++)
+        {
+            for (int a = x; a < x + width; a++)
+            {
+                _grid[b][a] = Tile.CreateOrcFloorTile();
+            }
+        }
     }
 }

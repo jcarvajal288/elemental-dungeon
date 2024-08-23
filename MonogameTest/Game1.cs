@@ -30,6 +30,7 @@ public class Game1 : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _map = new Map(100, 100);
         Images.LoadImages(GraphicsDevice);
+        _map.DigRoom(3, 3, 5, 5);
     }
 
     protected override void Update(GameTime gameTime)

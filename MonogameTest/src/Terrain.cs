@@ -4,5 +4,5 @@ public enum Terrain
 {
     OrcWall,
     OrcFloor,
-    CrystalLightBlue,
+    CrystalWallLightBlue,
 }

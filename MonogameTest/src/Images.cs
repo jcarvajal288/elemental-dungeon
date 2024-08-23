@@ -35,7 +35,7 @@ public static class Images
                 LoadTexture(graphicsDevice, "Content/assets/orcFloor/orc_7.png")
             ]
         );
-        SpriteSet.Add(Terrain.CrystalLightBlue, [
+        SpriteSet.Add(Terrain.CrystalWallLightBlue, [
                 LoadTexture(graphicsDevice, "Content/assets/crystals/crystal_wall_lightblue.png")
             ]
         );
