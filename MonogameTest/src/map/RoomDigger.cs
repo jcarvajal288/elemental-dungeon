@@ -48,25 +48,37 @@ public static class RoomDigger {
         const int minSize = 2;
         const int maxSize = 5;
         switch (playerAction) {
-            case PlayerAction.MoveLeft:
+            case PlayerAction.DecreaseBlueprintWidth:
                 if (_halfWidth > minSize) {
                     _halfWidth -= 1;
                 }
                 break;
-            case PlayerAction.MoveRight:
+            case PlayerAction.IncreaseBlueprintWidth:
                 if (_halfWidth < maxSize) {
                     _halfWidth += 1;
                 }
                 break;
-            case PlayerAction.MoveUp:
+            case PlayerAction.IncreaseBlueprintHeight:
                 if (_halfHeight < maxSize) {
                     _halfHeight += 1;
                 }
                 break;
-            case PlayerAction.MoveDown:
+            case PlayerAction.DecreaseBlueprintHeight:
                 if (_halfHeight > minSize) {
                     _halfHeight -= 1;
                 }
+                break;
+            case PlayerAction.MoveLeft:
+                _digCenter = _digCenter with { X = _digCenter.X - 1 };
+                break;
+            case PlayerAction.MoveRight:
+                _digCenter = _digCenter with { X = _digCenter.X + 1 };
+                break;
+            case PlayerAction.MoveUp:
+                _digCenter = _digCenter with { Y = _digCenter.Y - 1 };
+                break;
+            case PlayerAction.MoveDown:
+                _digCenter = _digCenter with { Y = _digCenter.Y + 1 };
                 break;
         }
     }

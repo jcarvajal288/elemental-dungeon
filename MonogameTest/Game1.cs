@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonogameTest.map;
+using MonogameTest.player;
 
 namespace MonogameTest;
 
@@ -41,7 +42,7 @@ public class Game1 : Game {
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        PlayerAction playerAction = PlayerInput.ReadKeyboard();
+        PlayerAction playerAction = PlayerInput.ReadKeyboard(_gameState);
         if (_gameState == GameState.Moving) {
             _player.SendAction(playerAction, _map);
             _gameState = RoomDigger.CheckForNewDig(_gameState, playerAction, _player.Position);

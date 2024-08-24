@@ -10,4 +10,8 @@ public enum PlayerAction {
     DigRight,
     DigUp,
     DigDown,
+    IncreaseBlueprintWidth,
+    IncreaseBlueprintHeight,
+    DecreaseBlueprintWidth,
+    DecreaseBlueprintHeight,
 }
