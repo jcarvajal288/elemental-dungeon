@@ -39,7 +39,7 @@ public class Game1 : Game {
             Exit();
 
         PlayerAction playerAction = PlayerInput.ReadKeyboard();
-        _player.SendAction(playerAction);
+        _player.SendAction(playerAction, _map);
 
         base.Update(gameTime);
     }

@@ -18,19 +18,25 @@ public class Player {
         spriteBatch.Draw(Images.PlayerSpriteSet[PlayerSprite.RobeBlackAndGold], pixelPosition, Color.White);
     }
 
-    public void SendAction(PlayerAction action) {
+    private void TryMove(Vector2 newPosition, Map map) {
+        if (map.GetTileAt(newPosition).IsWalkable()) {
+            _position = newPosition;
+        }
+    }
+
+    public void SendAction(PlayerAction action, Map map) {
         switch (action) {
             case PlayerAction.MoveLeft:
-                _position.X -= 1;
+                TryMove(new Vector2(_position.X - 1, _position.Y), map);
                 break;
             case PlayerAction.MoveRight:
-                _position.X += 1;
+                TryMove(new Vector2(_position.X + 1, _position.Y), map);
                 break;
             case PlayerAction.MoveUp:
-                _position.Y -= 1;
+                TryMove(new Vector2(_position.X, _position.Y - 1), map);
                 break;
             case PlayerAction.MoveDown:
-                _position.Y += 1;
+                TryMove(new Vector2(_position.X, _position.Y + 1), map);
                 break;
         };
     }
