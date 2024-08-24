@@ -42,9 +42,11 @@ public class Game1 : Game {
             Exit();
 
         PlayerAction playerAction = PlayerInput.ReadKeyboard();
-        _player.SendAction(playerAction, _map);
         if (_gameState == GameState.Moving) {
+            _player.SendAction(playerAction, _map);
             _gameState = RoomDigger.CheckForNewDig(_gameState, playerAction, _player.Position);
+        } else {
+            RoomDigger.AdjustBlueprint(playerAction);
         }
 
         base.Update(gameTime);

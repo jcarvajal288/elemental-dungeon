@@ -43,4 +43,31 @@ public static class RoomDigger {
             }
         }
     }
+
+    public static void AdjustBlueprint(PlayerAction playerAction) {
+        const int minSize = 2;
+        const int maxSize = 5;
+        switch (playerAction) {
+            case PlayerAction.MoveLeft:
+                if (_halfWidth > minSize) {
+                    _halfWidth -= 1;
+                }
+                break;
+            case PlayerAction.MoveRight:
+                if (_halfWidth < maxSize) {
+                    _halfWidth += 1;
+                }
+                break;
+            case PlayerAction.MoveUp:
+                if (_halfHeight < maxSize) {
+                    _halfHeight += 1;
+                }
+                break;
+            case PlayerAction.MoveDown:
+                if (_halfHeight > minSize) {
+                    _halfHeight -= 1;
+                }
+                break;
+        }
+    }
 }
