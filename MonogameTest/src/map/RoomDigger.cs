@@ -8,6 +8,7 @@ namespace MonogameTest.map;
 public static class RoomDigger {
 
     private static Vector2 _digCenter;
+    private static PlayerAction _digDirection;
     private static int _halfWidth;
     private static int _halfHeight;
     private static Vector2 _corridorTopLeft;
@@ -32,6 +33,7 @@ public static class RoomDigger {
             _digCenter = playerPosition with { X = playerPosition.X - distanceFromPlayer };
             _corridorTopLeft = _digCenter with { Y = _digCenter.Y - 1 };
             _corridorBottomRight = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
+            _digDirection = PlayerAction.DigLeft;
             return GameState.Digging;
         }
 
@@ -42,6 +44,7 @@ public static class RoomDigger {
             _digCenter = playerPosition with { X = playerPosition.X + distanceFromPlayer };
             _corridorTopLeft = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
             _corridorBottomRight = _digCenter with { Y = _digCenter.Y + 1 };
+            _digDirection = PlayerAction.DigRight;
             return GameState.Digging;
         }
 
@@ -52,6 +55,7 @@ public static class RoomDigger {
             _digCenter = playerPosition with { Y = playerPosition.Y - distanceFromPlayer };
             _corridorTopLeft = _digCenter with { X = _digCenter.X - 1 };
             _corridorBottomRight = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
+            _digDirection = PlayerAction.DigUp;
             return GameState.Digging;
         }
 
@@ -62,6 +66,7 @@ public static class RoomDigger {
             _digCenter = playerPosition with { Y = playerPosition.Y + distanceFromPlayer };
             _corridorTopLeft = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
             _corridorBottomRight = _digCenter with { X = _digCenter.X + 1 };
+            _digDirection = PlayerAction.DigDown;
             return GameState.Digging;
         }
     }
@@ -110,17 +115,32 @@ public static class RoomDigger {
                 }
                 break;
             case PlayerAction.MoveLeft:
-                _digCenter = _digCenter with { X = _digCenter.X - 1 };
+                _digCenter = ValidateCenterMove(_digCenter with { X = _digCenter.X - 1 });
                 break;
             case PlayerAction.MoveRight:
-                _digCenter = _digCenter with { X = _digCenter.X + 1 };
+                _digCenter = ValidateCenterMove(_digCenter with { X = _digCenter.X + 1 });
                 break;
             case PlayerAction.MoveUp:
-                _digCenter = _digCenter with { Y = _digCenter.Y - 1 };
+                _digCenter = ValidateCenterMove(_digCenter with { Y = _digCenter.Y - 1 });
                 break;
             case PlayerAction.MoveDown:
-                _digCenter = _digCenter with { Y = _digCenter.Y + 1 };
+                _digCenter = ValidateCenterMove(_digCenter with { Y = _digCenter.Y + 1 });
                 break;
+        }
+
+        Vector2 ValidateCenterMove(Vector2 newPosition) {
+            Vector2 newRoomTopLeft = newPosition with { X = newPosition.X - _halfWidth, Y = newPosition.Y - _halfHeight };
+            Vector2 newRoomBottomRight = newPosition with { X = newPosition.X + _halfWidth, Y = newPosition.Y + _halfHeight };
+            if (_digDirection is PlayerAction.DigLeft or PlayerAction.DigRight) {
+                if (newRoomTopLeft.Y > _corridorTopLeft.Y || newRoomBottomRight.Y < _corridorBottomRight.Y) {
+                    return _digCenter;
+                }
+            } else if (_digDirection is PlayerAction.DigUp or PlayerAction.DigDown){
+                if (newRoomTopLeft.X > _corridorTopLeft.X || newRoomBottomRight.X < _corridorBottomRight.X) {
+                    return _digCenter;
+                }
+            }
+            return newPosition;
         }
     }
 }
