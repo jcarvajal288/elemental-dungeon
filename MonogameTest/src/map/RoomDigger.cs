@@ -21,21 +21,21 @@ public static class RoomDigger {
             case PlayerAction.DigLeft:
                 _digCenter = playerPosition with { X = playerPosition.X - distanceFromPlayer };
                 _corridorTopLeft = _digCenter with { Y = _digCenter.Y - 1 };
-                _corridorBottomRight = playerPosition with { Y = playerPosition.Y + 1 };
+                _corridorBottomRight = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
                 return GameState.Digging;
             case PlayerAction.DigRight:
                 _digCenter = playerPosition with { X = playerPosition.X + distanceFromPlayer };
-                _corridorTopLeft = playerPosition with { Y = playerPosition.Y - 1 };
+                _corridorTopLeft = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
                 _corridorBottomRight = _digCenter with { Y = _digCenter.Y + 1 };
                 return GameState.Digging;
             case PlayerAction.DigUp:
                 _digCenter = playerPosition with { Y = playerPosition.Y - distanceFromPlayer };
                 _corridorTopLeft = _digCenter with { X = _digCenter.X - 1 };
-                _corridorBottomRight = playerPosition with { X = playerPosition.X + 1 };
+                _corridorBottomRight = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
                 return GameState.Digging;
             case PlayerAction.DigDown:
                 _digCenter = playerPosition with { Y = playerPosition.Y + distanceFromPlayer };
-                _corridorTopLeft = playerPosition with { X = playerPosition.X - 1 };
+                _corridorTopLeft = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
                 _corridorBottomRight = _digCenter with { X = _digCenter.X + 1 };
                 return GameState.Digging;
             default:
