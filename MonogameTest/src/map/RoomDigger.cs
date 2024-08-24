@@ -13,33 +13,56 @@ public static class RoomDigger {
     private static Vector2 _corridorTopLeft;
     private static Vector2 _corridorBottomRight;
     
-    public static GameState CheckForNewDig(GameState gameState, PlayerAction playerAction, Vector2 playerPosition) {
+    public static GameState CheckForNewDig(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map) {
         const int distanceFromPlayer = 5;
         _halfWidth = 2;
         _halfHeight = 2;
-        switch (playerAction) {
-            case PlayerAction.DigLeft:
-                _digCenter = playerPosition with { X = playerPosition.X - distanceFromPlayer };
-                _corridorTopLeft = _digCenter with { Y = _digCenter.Y - 1 };
-                _corridorBottomRight = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
-                return GameState.Digging;
-            case PlayerAction.DigRight:
-                _digCenter = playerPosition with { X = playerPosition.X + distanceFromPlayer };
-                _corridorTopLeft = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
-                _corridorBottomRight = _digCenter with { Y = _digCenter.Y + 1 };
-                return GameState.Digging;
-            case PlayerAction.DigUp:
-                _digCenter = playerPosition with { Y = playerPosition.Y - distanceFromPlayer };
-                _corridorTopLeft = _digCenter with { X = _digCenter.X - 1 };
-                _corridorBottomRight = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
-                return GameState.Digging;
-            case PlayerAction.DigDown:
-                _digCenter = playerPosition with { Y = playerPosition.Y + distanceFromPlayer };
-                _corridorTopLeft = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
-                _corridorBottomRight = _digCenter with { X = _digCenter.X + 1 };
-                return GameState.Digging;
-            default:
-                return gameState;
+        return playerAction switch {
+            PlayerAction.DigLeft => StartDigLeft(),
+            PlayerAction.DigRight => StartDigRight(),
+            PlayerAction.DigUp => StartDigUp(),
+            PlayerAction.DigDown => StartDigDown(),
+            _ => gameState
+        };
+
+        GameState StartDigLeft() {
+            if (map.GetTileAt(playerPosition with { X = playerPosition.X - 1 }).IsWalkable()) {
+                return GameState.Moving;
+            }
+            _digCenter = playerPosition with { X = playerPosition.X - distanceFromPlayer };
+            _corridorTopLeft = _digCenter with { Y = _digCenter.Y - 1 };
+            _corridorBottomRight = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
+            return GameState.Digging;
+        }
+
+        GameState StartDigRight() {
+            if (map.GetTileAt(playerPosition with { X = playerPosition.X + 1 }).IsWalkable()) {
+                return GameState.Moving;
+            }
+            _digCenter = playerPosition with { X = playerPosition.X + distanceFromPlayer };
+            _corridorTopLeft = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
+            _corridorBottomRight = _digCenter with { Y = _digCenter.Y + 1 };
+            return GameState.Digging;
+        }
+
+        GameState StartDigUp() {
+            if (map.GetTileAt(playerPosition with { Y = playerPosition.Y - 1 }).IsWalkable()) {
+                return GameState.Moving;
+            }
+            _digCenter = playerPosition with { Y = playerPosition.Y - distanceFromPlayer };
+            _corridorTopLeft = _digCenter with { X = _digCenter.X - 1 };
+            _corridorBottomRight = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
+            return GameState.Digging;
+        }
+
+        GameState StartDigDown() {
+            if (map.GetTileAt(playerPosition with { Y = playerPosition.Y + 1 }).IsWalkable()) {
+                return GameState.Moving;
+            }
+            _digCenter = playerPosition with { Y = playerPosition.Y + distanceFromPlayer };
+            _corridorTopLeft = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
+            _corridorBottomRight = _digCenter with { X = _digCenter.X + 1 };
+            return GameState.Digging;
         }
     }
 
