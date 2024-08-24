@@ -1,6 +1,6 @@
 namespace MonogameTest;
 
-public enum PlayerSprite {
+public enum PlayerSprites {
     HumanMale,
     RobeBlackAndGold
 }

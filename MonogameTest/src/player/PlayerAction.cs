@@ -6,4 +6,8 @@ public enum PlayerAction {
     MoveRight,
     MoveUp,
     MoveDown,
+    DigLeft,
+    DigRight,
+    DigUp,
+    DigDown,
 }

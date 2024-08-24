@@ -25,16 +25,16 @@ public static class PlayerInput {
     public static PlayerAction ReadKeyboard() {
         GetState();
         if (JustPressed(Keys.Left)) {
-            return PlayerAction.MoveLeft;
+            return IsPressed(Keys.D) ? PlayerAction.DigLeft : PlayerAction.MoveLeft;
         } 
         if (JustPressed(Keys.Right)) {
-            return PlayerAction.MoveRight;
+            return IsPressed(Keys.D) ? PlayerAction.DigRight : PlayerAction.MoveRight;
         } 
         if (JustPressed(Keys.Up)) {
-            return PlayerAction.MoveUp;
+            return IsPressed(Keys.D) ? PlayerAction.DigUp : PlayerAction.MoveUp;
         } 
         if (JustPressed(Keys.Down)) {
-            return PlayerAction.MoveDown;
+            return IsPressed(Keys.D) ? PlayerAction.DigDown : PlayerAction.MoveDown;
         }
 
         return PlayerAction.NoAction;

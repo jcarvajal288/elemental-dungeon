@@ -7,7 +7,8 @@ namespace MonogameTest;
 
 public static class Images {
     public static readonly Dictionary<Terrain, List<Texture2D>> TerrainSpriteSet = new();
-    public static readonly Dictionary<PlayerSprite, Texture2D> PlayerSpriteSet = [];
+    public static readonly Dictionary<PlayerSprites, Texture2D> PlayerSpriteSet = [];
+    public static readonly Dictionary<UISprites, Texture2D> UISpriteSet = [];
 
     private static Texture2D LoadTexture(GraphicsDevice graphicsDevice, string path) {
         using FileStream fileStream = File.OpenRead(path);
@@ -37,7 +38,9 @@ public static class Images {
                 LoadTexture(graphicsDevice, "Content/assets/crystals/crystal_wall_lightblue.png")
             ]
         );
-        PlayerSpriteSet.Add(PlayerSprite.HumanMale, LoadTexture(graphicsDevice, "Content/assets/player/human_male.png"));
-        PlayerSpriteSet.Add(PlayerSprite.RobeBlackAndGold, LoadTexture(graphicsDevice, "Content/assets/player/robe_black_gold.png"));
+        PlayerSpriteSet.Add(PlayerSprites.HumanMale, LoadTexture(graphicsDevice, "Content/assets/player/human_male.png"));
+        PlayerSpriteSet.Add(PlayerSprites.RobeBlackAndGold, LoadTexture(graphicsDevice, "Content/assets/player/robe_black_gold.png"));
+        UISpriteSet.Add(UISprites.CursorGreen, LoadTexture(graphicsDevice, "Content/assets/ui/cursor_green.png"));
+        UISpriteSet.Add(UISprites.CursorRed, LoadTexture(graphicsDevice, "Content/assets/ui/cursor_red.png"));
     }
 }

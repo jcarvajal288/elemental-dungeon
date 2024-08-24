@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonogameTest.map;
 
 namespace MonogameTest;
 
@@ -8,6 +9,7 @@ public class Game1 : Game {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+    private GameState _gameState;
     private Map _map;
     private Player _player;
 
@@ -15,6 +17,7 @@ public class Game1 : Game {
         _graphics = new GraphicsDeviceManager(this);
         _graphics.PreferredBackBufferWidth = 1280;
         _graphics.PreferredBackBufferHeight = 720;
+        _gameState = GameState.Moving;
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -40,6 +43,9 @@ public class Game1 : Game {
 
         PlayerAction playerAction = PlayerInput.ReadKeyboard();
         _player.SendAction(playerAction, _map);
+        if (_gameState == GameState.Moving) {
+            _gameState = RoomDigger.CheckForNewDig(_gameState, playerAction, _player.Position);
+        }
 
         base.Update(gameTime);
     }
@@ -47,9 +53,15 @@ public class Game1 : Game {
     protected override void Draw(GameTime gameTime) {
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
+        
         _map.Draw(_spriteBatch);
         _player.Draw(_spriteBatch);
+        if (_gameState == GameState.Digging) {
+            RoomDigger.DrawRoomBlueprint(_spriteBatch);
+        }
+        
         _spriteBatch.End();
+        
         base.Draw(gameTime);
     }
 }

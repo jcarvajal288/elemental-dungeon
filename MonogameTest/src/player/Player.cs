@@ -6,7 +6,7 @@ namespace MonogameTest;
 public class Player {
     private Vector2 _position;
 
-    //public Vector2 Position => _position;
+    public Vector2 Position => _position;
 
     public Player(Vector2 position) {
         _position = position;            
@@ -14,8 +14,8 @@ public class Player {
 
     public void Draw(SpriteBatch spriteBatch) {
         Vector2 pixelPosition = new(_position.X * Tile.Size, _position.Y * Tile.Size);
-        spriteBatch.Draw(Images.PlayerSpriteSet[PlayerSprite.HumanMale], pixelPosition, Color.White);
-        spriteBatch.Draw(Images.PlayerSpriteSet[PlayerSprite.RobeBlackAndGold], pixelPosition, Color.White);
+        spriteBatch.Draw(Images.PlayerSpriteSet[PlayerSprites.HumanMale], pixelPosition, Color.White);
+        spriteBatch.Draw(Images.PlayerSpriteSet[PlayerSprites.RobeBlackAndGold], pixelPosition, Color.White);
     }
 
     private void TryMove(Vector2 newPosition, Map map) {
@@ -38,6 +38,6 @@ public class Player {
             case PlayerAction.MoveDown:
                 TryMove(new Vector2(_position.X, _position.Y + 1), map);
                 break;
-        };
+        }
     }
 }
