@@ -6,16 +6,15 @@ using Microsoft.Xna.Framework.Graphics;
 namespace MonogameTest;
 
 public class Map {
-    private const int TileSize = 32;
     private readonly List<List<Tile>> _grid;
 
     public Map(int width, int height) {
-        Random rng = new Random();
+        Random rng = new();
         _grid = new List<List<Tile>>();
         for (int y = 0; y < height; y++) {
             _grid.Add(new List<Tile>());
             for (int x = 0; x < width; x++) {
-                if (rng.Next(0, 20) == 0) {
+                if (rng.Next(0, 50) == 0) {
                     _grid[y].Add(Tile.CreateCrystalWallLightBlueTile());
                 } else {
                     _grid[y].Add(Tile.CreateOrcWallTile());
@@ -28,7 +27,7 @@ public class Map {
         for (int y = 0; y < _grid.Count; y++) {
             for (int x = 0; x < _grid[y].Count; x++) {
                 Tile tile = _grid[y][x];
-                Vector2 position = new(x * TileSize, y * TileSize);
+                Vector2 position = new(x * Tile.Size, y * Tile.Size);
                 tile.Draw(spriteBatch, position);
             }
         }

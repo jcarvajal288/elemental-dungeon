@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace MonogameTest;
 
 public class Tile {
+    public static readonly int Size = 32;
     private static Random rng = new();
 
     private Terrain _terrain;
@@ -28,6 +29,6 @@ public class Tile {
     }
 
     public void Draw(SpriteBatch spriteBatch, Vector2 position) {
-        spriteBatch.Draw(Images.SpriteSet[_terrain][_spriteIndex], position, Color.White);
+        spriteBatch.Draw(Images.TerrainSpriteSet[_terrain][_spriteIndex], position, Color.White);
     }
 }

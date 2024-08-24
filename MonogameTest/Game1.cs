@@ -9,9 +9,12 @@ public class Game1 : Game {
     private SpriteBatch _spriteBatch;
 
     private Map _map;
+    private Player _player;
 
     public Game1() {
         _graphics = new GraphicsDeviceManager(this);
+        _graphics.PreferredBackBufferWidth = 1280;
+        _graphics.PreferredBackBufferHeight = 720;
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
@@ -24,9 +27,10 @@ public class Game1 : Game {
 
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _map = new Map(100, 100);
         Images.LoadImages(GraphicsDevice);
-        _map.DigRoom(3, 3, 5, 5);
+        _map = new Map(100, 100);
+        _player = new Player(new Vector2(20, 10));
+        _map.DigRoom(18, 8, 5, 5);
     }
 
     protected override void Update(GameTime gameTime) {
@@ -34,7 +38,6 @@ public class Game1 : Game {
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        // TODO: Add your update logic here
 
         base.Update(gameTime);
     }
@@ -43,6 +46,7 @@ public class Game1 : Game {
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
         _map.Draw(_spriteBatch);
+        _player.Draw(_spriteBatch);
         _spriteBatch.End();
         base.Draw(gameTime);
     }
