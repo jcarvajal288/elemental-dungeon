@@ -5,18 +5,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MonogameTest;
 
-public static class Images
-{
+public static class Images {
     public static readonly Dictionary<Terrain, List<Texture2D>> SpriteSet = new();
 
-    private static Texture2D LoadTexture(GraphicsDevice graphicsDevice, string path)
-    {
+    private static Texture2D LoadTexture(GraphicsDevice graphicsDevice, string path) {
         using FileStream fileStream = File.OpenRead(path);
         return Texture2D.FromStream(graphicsDevice, fileStream);
     }
 
-    public static void LoadImages(GraphicsDevice graphicsDevice)
-    {
+    public static void LoadImages(GraphicsDevice graphicsDevice) {
         SpriteSet.Add(Terrain.OrcWall, [
                 LoadTexture(graphicsDevice, "Content/assets/orcWall/orc_0.png"),
                 LoadTexture(graphicsDevice, "Content/assets/orcWall/orc_1.png"),
@@ -39,5 +36,5 @@ public static class Images
                 LoadTexture(graphicsDevice, "Content/assets/crystals/crystal_wall_lightblue.png")
             ]
         );
-    }    
+    }
 }

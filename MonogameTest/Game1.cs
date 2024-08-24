@@ -4,37 +4,32 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MonogameTest;
 
-public class Game1 : Game
-{
+public class Game1 : Game {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
     private Map _map;
 
-    public Game1()
-    {
+    public Game1() {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
 
-    protected override void Initialize()
-    {
+    protected override void Initialize() {
         // TODO: Add your initialization logic here
 
         base.Initialize();
     }
 
-    protected override void LoadContent()
-    {
+    protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _map = new Map(100, 100);
         Images.LoadImages(GraphicsDevice);
         _map.DigRoom(3, 3, 5, 5);
     }
 
-    protected override void Update(GameTime gameTime)
-    {
+    protected override void Update(GameTime gameTime) {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
@@ -44,8 +39,7 @@ public class Game1 : Game
         base.Update(gameTime);
     }
 
-    protected override void Draw(GameTime gameTime)
-    {
+    protected override void Draw(GameTime gameTime) {
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
         _map.Draw(_spriteBatch);

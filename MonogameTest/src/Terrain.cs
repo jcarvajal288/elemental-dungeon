@@ -1,7 +1,6 @@
 namespace MonogameTest;
 
-public enum Terrain
-{
+public enum Terrain {
     OrcWall,
     OrcFloor,
     CrystalWallLightBlue,
