@@ -4,24 +4,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MonogameTest;
 
-public class Tile {
-    public static readonly int Size = 32;
-    private static Random rng = new();
-
-    private Terrain _terrain;
-    private int _spriteIndex;
-
-    public Tile(Terrain terrain, int spriteIndex) {
-        _terrain = terrain;
-        _spriteIndex = spriteIndex;
-    }
+public class Tile(Terrain terrain, int spriteIndex) {
+    public const int Size = 32;
+    private static readonly Random Rng = new();
 
     public static Tile CreateOrcWallTile() {
-        return new Tile(Terrain.OrcWall, rng.Next(0, 4));
+        return new Tile(Terrain.OrcWall, Rng.Next(0, 4));
     }
 
     public static Tile CreateOrcFloorTile() {
-        return new Tile(Terrain.OrcFloor, rng.Next(0, 8));
+        return new Tile(Terrain.OrcFloor, Rng.Next(0, 8));
     }
 
     public static Tile CreateCrystalWallLightBlueTile() {
@@ -29,6 +21,6 @@ public class Tile {
     }
 
     public void Draw(SpriteBatch spriteBatch, Vector2 position) {
-        spriteBatch.Draw(Images.TerrainSpriteSet[_terrain][_spriteIndex], position, Color.White);
+        spriteBatch.Draw(Images.TerrainSpriteSet[terrain][spriteIndex], position, Color.White);
     }
 }

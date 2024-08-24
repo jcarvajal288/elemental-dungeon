@@ -6,7 +6,7 @@ namespace MonogameTest;
 public class Player {
     private Vector2 _position;
 
-    public Vector2 Position => _position;
+    //public Vector2 Position => _position;
 
     public Player(Vector2 position) {
         _position = position;            
@@ -18,16 +18,20 @@ public class Player {
         spriteBatch.Draw(Images.PlayerSpriteSet[PlayerSprite.RobeBlackAndGold], pixelPosition, Color.White);
     }
 
-    public void MoveLeft() {
-        _position.X -= 1;
-    }
-    public void MoveRight() {
-        _position.X += 1;
-    }
-    public void MoveUp() {
-        _position.Y -= 1;
-    }
-    public void MoveDown() {
-        _position.Y += 1;
+    public void SendAction(PlayerAction action) {
+        switch (action) {
+            case PlayerAction.MoveLeft:
+                _position.X -= 1;
+                break;
+            case PlayerAction.MoveRight:
+                _position.X += 1;
+                break;
+            case PlayerAction.MoveUp:
+                _position.Y -= 1;
+                break;
+            case PlayerAction.MoveDown:
+                _position.Y += 1;
+                break;
+        };
     }
 }

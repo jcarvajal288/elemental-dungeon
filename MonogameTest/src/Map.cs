@@ -10,9 +10,9 @@ public class Map {
 
     public Map(int width, int height) {
         Random rng = new();
-        _grid = new List<List<Tile>>();
+        _grid = [];
         for (int y = 0; y < height; y++) {
-            _grid.Add(new List<Tile>());
+            _grid.Add([]);
             for (int x = 0; x < width; x++) {
                 if (rng.Next(0, 50) == 0) {
                     _grid[y].Add(Tile.CreateCrystalWallLightBlueTile());

@@ -38,18 +38,8 @@ public class Game1 : Game {
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        if (Keyboard.GetState().IsKeyDown(Keys.Left)) {
-            _player.MoveLeft();
-        } 
-        if (Keyboard.GetState().IsKeyDown(Keys.Right)) {
-            _player.MoveRight();
-        } 
-        if (Keyboard.GetState().IsKeyDown(Keys.Up)) {
-            _player.MoveUp();
-        } 
-        if (Keyboard.GetState().IsKeyDown(Keys.Down)) {
-            _player.MoveDown();
-        } 
+        PlayerAction playerAction = PlayerInput.ReadKeyboard();
+        _player.SendAction(playerAction);
 
         base.Update(gameTime);
     }
