@@ -22,7 +22,9 @@ public static class PlayerInput {
 
     public static PlayerAction ReadKeyboard(GameState gameState) {
         GetKeyState();
-        if (gameState == GameState.Moving) {
+        if (JustPressed(Keys.Escape)) {
+            return PlayerAction.Exit;
+        } else if (gameState == GameState.Moving) {
             return ReadMovementActions();
         } else {
             return ReadDiggingActions();

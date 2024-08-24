@@ -2,6 +2,7 @@ namespace MonogameTest;
 
 public enum PlayerAction {
     NoAction,
+    Exit,
     MoveLeft,
     MoveRight,
     MoveUp,

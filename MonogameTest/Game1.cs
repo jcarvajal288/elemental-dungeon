@@ -38,11 +38,15 @@ public class Game1 : Game {
     }
     
     protected override void Update(GameTime gameTime) {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
         PlayerAction playerAction = PlayerInput.ReadKeyboard(_gameState);
+        if (playerAction == PlayerAction.Exit) {
+            if (_gameState == GameState.Moving) {
+                Exit();
+            } else {
+                _gameState = GameState.Moving;
+            }
+        } 
+        
         if (_gameState == GameState.Moving) {
             _player.SendAction(playerAction, _map);
             _gameState = RoomDigger.CheckForNewDig(_gameState, playerAction, _player.Position);
