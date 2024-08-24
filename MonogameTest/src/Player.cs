@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace MonogameTest;
 
 public class Player {
-    private readonly Vector2 _position;
+    private Vector2 _position;
 
     public Vector2 Position => _position;
 
@@ -16,5 +16,18 @@ public class Player {
         Vector2 pixelPosition = new(_position.X * Tile.Size, _position.Y * Tile.Size);
         spriteBatch.Draw(Images.PlayerSpriteSet[PlayerSprite.HumanMale], pixelPosition, Color.White);
         spriteBatch.Draw(Images.PlayerSpriteSet[PlayerSprite.RobeBlackAndGold], pixelPosition, Color.White);
+    }
+
+    public void MoveLeft() {
+        _position.X -= 1;
+    }
+    public void MoveRight() {
+        _position.X += 1;
+    }
+    public void MoveUp() {
+        _position.Y -= 1;
+    }
+    public void MoveDown() {
+        _position.Y += 1;
     }
 }

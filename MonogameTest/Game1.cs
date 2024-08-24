@@ -32,12 +32,24 @@ public class Game1 : Game {
         _player = new Player(new Vector2(20, 10));
         _map.DigRoom(18, 8, 5, 5);
     }
-
+    
     protected override void Update(GameTime gameTime) {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
+        if (Keyboard.GetState().IsKeyDown(Keys.Left)) {
+            _player.MoveLeft();
+        } 
+        if (Keyboard.GetState().IsKeyDown(Keys.Right)) {
+            _player.MoveRight();
+        } 
+        if (Keyboard.GetState().IsKeyDown(Keys.Up)) {
+            _player.MoveUp();
+        } 
+        if (Keyboard.GetState().IsKeyDown(Keys.Down)) {
+            _player.MoveDown();
+        } 
 
         base.Update(gameTime);
     }
