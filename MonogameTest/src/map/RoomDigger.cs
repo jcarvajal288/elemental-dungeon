@@ -14,12 +14,17 @@ public static class RoomDigger {
     private static int _halfHeight;
     private static Vector2 _corridorTopLeft;
     private static Vector2 _corridorBottomRight;
+    
     private static bool _isDigValid;
+    private static int mapWidth;
+    private static int mapHeight;
     
     public static GameState CheckForNewDig(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map) {
         const int distanceFromPlayer = 5;
         _halfWidth = 2;
         _halfHeight = 2;
+        mapWidth = map.GetWidth();
+        mapHeight = map.GetHeight();
         return playerAction switch {
             PlayerAction.DigLeft => StartDigLeft(),
             PlayerAction.DigRight => StartDigRight(),
@@ -203,6 +208,11 @@ public static class RoomDigger {
             }
         } 
         if (!CorridorIsLongEnough(roomTopLeft, roomBottomRight)) {
+            _isDigValid = false;
+            return;
+        }
+
+        if (roomTopLeft.X < 1 || roomTopLeft.Y < 1 || roomBottomRight.X >= mapWidth-1 || roomBottomRight.Y >= mapHeight-1) {
             _isDigValid = false;
             return;
         }

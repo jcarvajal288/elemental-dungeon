@@ -48,4 +48,12 @@ public class Map {
     public void SetTileAt(Vector2 position, Tile tile) {
         _grid[(int)position.Y][(int)position.X] = tile;
     }
+
+    public int GetWidth() {
+        return _grid[0].Count;
+    }
+
+    public int GetHeight() {
+        return _grid.Count;
+    }
 }
