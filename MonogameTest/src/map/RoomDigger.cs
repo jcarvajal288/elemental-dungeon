@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -154,13 +155,34 @@ public static class RoomDigger {
         if (_digDirection is PlayerAction.DigLeft or PlayerAction.DigRight) {
             if (newRoomTopLeft.Y > _corridorTopLeft.Y || newRoomBottomRight.Y < _corridorBottomRight.Y) {
                 return false;
-            }
+            } 
         } else if (_digDirection is PlayerAction.DigUp or PlayerAction.DigDown){
             if (newRoomTopLeft.X > _corridorTopLeft.X || newRoomBottomRight.X < _corridorBottomRight.X) {
                 return false;
             }
+        } 
+        if (!CorridorIsLongEnough(newRoomTopLeft, newRoomBottomRight)) {
+            return false;
+        }
+        return true;
+    }
+
+    private static bool CorridorIsLongEnough(Vector2 newRoomTopLeft, Vector2 newRoomBottomRight) {
+        HashSet<Vector2> roomTiles = new();
+        for (int y = (int)newRoomTopLeft.Y; y <= newRoomBottomRight.Y; y++) {
+            for (int x = (int)newRoomTopLeft.X; x <= newRoomBottomRight.X; x++) {
+                roomTiles.Add(new (x, y));
+            }
+        }
+        
+        HashSet<Vector2> corridorTiles = new();
+        for (int y = (int)_corridorTopLeft.Y; y <= _corridorBottomRight.Y; y++) {
+            for (int x = (int)_corridorTopLeft.X; x <= _corridorBottomRight.X; x++) {
+                corridorTiles.Add(new(x, y));
+            }
         }
 
-        return true;
+        corridorTiles.ExceptWith(roomTiles);
+        return corridorTiles.Count >= 6;
     }
 }
