@@ -95,52 +95,72 @@ public static class RoomDigger {
         const int maxSize = 5;
         switch (playerAction) {
             case PlayerAction.DecreaseBlueprintWidth:
-                if (_halfWidth > minSize) {
+                if (_halfWidth > minSize && RoomAndCorridorAreValid(_digCenter, _halfWidth - 1, _halfWidth)) {
                     _halfWidth -= 1;
                 }
                 break;
             case PlayerAction.IncreaseBlueprintWidth:
-                if (_halfWidth < maxSize) {
+                if (_halfWidth < maxSize && RoomAndCorridorAreValid(_digCenter, _halfWidth + 1, _halfWidth)) {
                     _halfWidth += 1;
                 }
                 break;
             case PlayerAction.IncreaseBlueprintHeight:
-                if (_halfHeight < maxSize) {
+                if (_halfHeight < maxSize && RoomAndCorridorAreValid(_digCenter, _halfWidth, _halfHeight + 1)) {
                     _halfHeight += 1;
                 }
                 break;
             case PlayerAction.DecreaseBlueprintHeight:
-                if (_halfHeight > minSize) {
+                if (_halfHeight > minSize && RoomAndCorridorAreValid(_digCenter, _halfWidth, _halfHeight - 1)) {
                     _halfHeight -= 1;
                 }
                 break;
             case PlayerAction.MoveLeft:
-                _digCenter = ValidateCenterMove(_digCenter with { X = _digCenter.X - 1 });
+                ValidateCenterMove(_digCenter with { X = _digCenter.X - 1 });
                 break;
             case PlayerAction.MoveRight:
-                _digCenter = ValidateCenterMove(_digCenter with { X = _digCenter.X + 1 });
+                ValidateCenterMove(_digCenter with { X = _digCenter.X + 1 });
                 break;
             case PlayerAction.MoveUp:
-                _digCenter = ValidateCenterMove(_digCenter with { Y = _digCenter.Y - 1 });
+                ValidateCenterMove(_digCenter with { Y = _digCenter.Y - 1 });
                 break;
             case PlayerAction.MoveDown:
-                _digCenter = ValidateCenterMove(_digCenter with { Y = _digCenter.Y + 1 });
+                ValidateCenterMove(_digCenter with { Y = _digCenter.Y + 1 });
                 break;
         }
 
-        Vector2 ValidateCenterMove(Vector2 newPosition) {
-            Vector2 newRoomTopLeft = newPosition with { X = newPosition.X - _halfWidth, Y = newPosition.Y - _halfHeight };
-            Vector2 newRoomBottomRight = newPosition with { X = newPosition.X + _halfWidth, Y = newPosition.Y + _halfHeight };
-            if (_digDirection is PlayerAction.DigLeft or PlayerAction.DigRight) {
-                if (newRoomTopLeft.Y > _corridorTopLeft.Y || newRoomBottomRight.Y < _corridorBottomRight.Y) {
-                    return _digCenter;
-                }
-            } else if (_digDirection is PlayerAction.DigUp or PlayerAction.DigDown){
-                if (newRoomTopLeft.X > _corridorTopLeft.X || newRoomBottomRight.X < _corridorBottomRight.X) {
-                    return _digCenter;
-                }
+        void ValidateCenterMove(Vector2 newCenterPosition) {
+            if (!RoomAndCorridorAreValid(newCenterPosition, _halfWidth, _halfHeight)) return;
+            _digCenter = newCenterPosition;
+            switch (_digDirection) {
+                case PlayerAction.DigLeft:
+                    _corridorTopLeft = _corridorTopLeft with { X = _digCenter.X};
+                    break;
+                case PlayerAction.DigRight:
+                    _corridorBottomRight = _corridorBottomRight with { X = _digCenter.X };
+                    break;
+                case PlayerAction.DigUp:
+                    _corridorTopLeft = _corridorTopLeft with { Y = _digCenter.Y };
+                    break;
+                case PlayerAction.DigDown:
+                    _corridorBottomRight = _corridorBottomRight with { Y = _digCenter.Y };
+                    break;
             }
-            return newPosition;
         }
+    }
+
+    private static bool RoomAndCorridorAreValid(Vector2 newPosition, int newHalfWidth, int newHalfHeight) {
+        Vector2 newRoomTopLeft = newPosition with { X = newPosition.X - newHalfWidth, Y = newPosition.Y - newHalfHeight };
+        Vector2 newRoomBottomRight = newPosition with { X = newPosition.X + newHalfWidth, Y = newPosition.Y + newHalfHeight };
+        if (_digDirection is PlayerAction.DigLeft or PlayerAction.DigRight) {
+            if (newRoomTopLeft.Y > _corridorTopLeft.Y || newRoomBottomRight.Y < _corridorBottomRight.Y) {
+                return false;
+            }
+        } else if (_digDirection is PlayerAction.DigUp or PlayerAction.DigDown){
+            if (newRoomTopLeft.X > _corridorTopLeft.X || newRoomBottomRight.X < _corridorBottomRight.X) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
