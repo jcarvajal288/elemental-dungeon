@@ -21,35 +21,29 @@ public class Tile(Terrain terrain, int spriteIndex) {
     // Tile Builders
     public static Tile CreateTileForTerrain(Terrain terrain) {
         return terrain switch {
-            Terrain.OrcWall => CreateOrcWallTile(),
-            Terrain.OrcFloor => CreateOrcFloorTile(),
             Terrain.BrownBrickWall => CreateBrownBrickWallTile(),
-            Terrain.LimestoneFloor => CreateLimestoneFloorTile(),
             Terrain.BrownStoneWall => CreateBrownStoneWallTile(),
+            Terrain.CobbleStoneFloor => CreateCobbleStoneFloorTile(),
             Terrain.CrystalWallLightBlue => CreateCrystalWallLightBlueTile(),
             Terrain.CrystalWallLightRed => CreateCrystalWallLightRedTile(),
+            Terrain.GreyBrickWall => CreateGreyBrickWallTile(),
+            Terrain.LimestoneFloor => CreateLimestoneFloorTile(),
+            Terrain.OrcFloor => CreateOrcFloorTile(),
+            Terrain.OrcWall => CreateOrcWallTile(),
             _ => throw new ArgumentOutOfRangeException(nameof(terrain), terrain, null)
         };
-    }
-
-    public static Tile CreateOrcWallTile() {
-        return new Tile(Terrain.OrcWall, Rng.Next(0, 4));
-    }
-
-    public static Tile CreateOrcFloorTile() {
-        return new Tile(Terrain.OrcFloor, Rng.Next(0, 8));
     }
 
     private static Tile CreateBrownBrickWallTile() {
         throw new NotImplementedException();
     }
 
-    private static Tile CreateLimestoneFloorTile() {
+    private static Tile CreateBrownStoneWallTile() {
         throw new NotImplementedException();
     }
 
-    private static Tile CreateBrownStoneWallTile() {
-        throw new NotImplementedException();
+    private static Tile CreateCobbleStoneFloorTile() {
+        return new Tile(Terrain.CobbleStoneFloor, Rng.Next(0, Images.TerrainSpriteSet[Terrain.CobbleStoneFloor].Count));
     }
 
     public static Tile CreateCrystalWallLightBlueTile() {
@@ -58,5 +52,21 @@ public class Tile(Terrain terrain, int spriteIndex) {
     
     private static Tile CreateCrystalWallLightRedTile() {
         throw new NotImplementedException();
+    }
+    
+    private static Tile CreateGreyBrickWallTile() {
+        return new Tile(Terrain.GreyBrickWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.GreyBrickWall].Count));
+    }
+
+    private static Tile CreateLimestoneFloorTile() {
+        throw new NotImplementedException();
+    }
+
+    public static Tile CreateOrcFloorTile() {
+        return new Tile(Terrain.OrcFloor, Rng.Next(0, Images.TerrainSpriteSet[Terrain.OrcFloor].Count));
+    }
+
+    public static Tile CreateOrcWallTile() {
+        return new Tile(Terrain.OrcWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.OrcWall].Count));
     }
 }

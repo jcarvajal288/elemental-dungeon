@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonogameTest.map.rooms;
 
 namespace MonogameTest.map;
 
@@ -187,7 +188,7 @@ public static class RoomDigger {
             room.AddDoorwayForCorridor(corridorTiles);
             corridorTiles.ExceptWith(roomTiles);
             bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
-            Corridor corridor = new(_corridorTopLeft, _corridorBottomRight, corridorTiles.ToList(), isCorridorHorizontal);
+            Corridor corridor = new(corridorTiles.ToList(), isCorridorHorizontal);
             map.AddCorridor(corridor);
         }
     }

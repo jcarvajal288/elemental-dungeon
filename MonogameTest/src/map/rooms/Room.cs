@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace MonogameTest.map;
+namespace MonogameTest.map.rooms;
 
 public class Room() : Corridor {
 
