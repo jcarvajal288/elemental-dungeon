@@ -1,5 +1,7 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonogameTest.map;
 
 namespace MonogameTest;
 
@@ -22,6 +24,7 @@ public class Player {
         if (map.GetTileAt(newPosition).IsWalkable()) {
             _position = newPosition;
         }
+        Console.WriteLine(map.GetRoomIdForPosition(_position));
     }
 
     public void SendAction(PlayerAction action, Map map) {
