@@ -154,17 +154,26 @@ public static class RoomDigger {
         }
     }
 
-    private static void DigRoom(Map map) {
+    private static void DigRoom(Map map, bool digCorridor = true) {
         Vector2 roomTopLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
         int width = _halfWidth * 2;
         int height = _halfHeight * 2;
         Vector2 roomBottomRight = roomTopLeft with { X = roomTopLeft.X + width, Y = roomTopLeft.Y + height };
         HashSet<Vector2> roomTiles = GetTileRegion(roomTopLeft, roomBottomRight);
-        HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
-        roomTiles.UnionWith(corridorTiles);
+        if (digCorridor) {
+            HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
+            roomTiles.UnionWith(corridorTiles);
+        }
         foreach (Vector2 position in roomTiles) {
             map.SetTileAt(position, Tile.CreateOrcFloorTile());
         }
+    }
+
+    public static void DigRoom(Map map, Vector2 center, int halfWidth, int halfHeight ) {
+        _digCenter = center;
+        _halfWidth = halfWidth;
+        _halfHeight = halfHeight;
+        DigRoom(map, false);
     }
 
     private static bool RoomAndCorridorAreValid(Vector2 newPosition, int newHalfWidth, int newHalfHeight) {
