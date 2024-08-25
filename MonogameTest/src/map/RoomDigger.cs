@@ -14,6 +14,7 @@ public static class RoomDigger {
     private static int _halfHeight;
     private static Vector2 _corridorTopLeft;
     private static Vector2 _corridorBottomRight;
+    private static bool _isDigValid;
     
     public static GameState CheckForNewDig(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map) {
         const int distanceFromPlayer = 5;
@@ -35,6 +36,7 @@ public static class RoomDigger {
             _corridorTopLeft = _digCenter with { Y = _digCenter.Y - 1 };
             _corridorBottomRight = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
             _digDirection = PlayerAction.DigLeft;
+            ValidateDig();
             return GameState.Digging;
         }
 
@@ -46,6 +48,7 @@ public static class RoomDigger {
             _corridorTopLeft = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
             _corridorBottomRight = _digCenter with { Y = _digCenter.Y + 1 };
             _digDirection = PlayerAction.DigRight;
+            ValidateDig();
             return GameState.Digging;
         }
 
@@ -57,6 +60,7 @@ public static class RoomDigger {
             _corridorTopLeft = _digCenter with { X = _digCenter.X - 1 };
             _corridorBottomRight = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
             _digDirection = PlayerAction.DigUp;
+            ValidateDig();
             return GameState.Digging;
         }
 
@@ -68,25 +72,29 @@ public static class RoomDigger {
             _corridorTopLeft = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
             _corridorBottomRight = _digCenter with { X = _digCenter.X + 1 };
             _digDirection = PlayerAction.DigDown;
+            ValidateDig();
             return GameState.Digging;
         }
     }
 
     public static void DrawRoomBlueprint(SpriteBatch spriteBatch) {
+        Texture2D cursorSprite = _isDigValid
+            ? Images.UISpriteSet[UISprites.CursorGreen]
+            : Images.UISpriteSet[UISprites.CursorRed];
         Vector2 topLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
         int width = _halfWidth * 2 + 1;
         int height = _halfHeight * 2 + 1;
         for (int y = (int)topLeft.Y; y < topLeft.Y + height; y++) {
             for (int x = (int)topLeft.X; x < topLeft.X + width; x++) {
                 Vector2 pixelPosition = new(x * Tile.Size, y * Tile.Size);
-                spriteBatch.Draw(Images.UISpriteSet[UISprites.CursorGreen], pixelPosition, Color.White);
+                spriteBatch.Draw(cursorSprite, pixelPosition, Color.White);
             }
         }
 
         for (int y = (int)_corridorTopLeft.Y; y <= _corridorBottomRight.Y; y++) {
             for (int x = (int)_corridorTopLeft.X; x <= _corridorBottomRight.X; x++) {
                 Vector2 pixelPosition = new(x * Tile.Size, y * Tile.Size);
-                spriteBatch.Draw(Images.UISpriteSet[UISprites.CursorGreen], pixelPosition, Color.White);
+                spriteBatch.Draw(cursorSprite, pixelPosition, Color.White);
             }
         }
     }
@@ -96,46 +104,49 @@ public static class RoomDigger {
         const int maxSize = 5;
         switch (playerAction) {
             case PlayerAction.DecreaseBlueprintWidth:
-                if (_halfWidth > minSize && RoomAndCorridorAreValid(_digCenter, _halfWidth - 1, _halfWidth)) {
+                if (_halfWidth > minSize) {
                     _halfWidth -= 1;
                 }
+                ValidateDig();
                 return GameState.Digging;
             case PlayerAction.IncreaseBlueprintWidth:
-                if (_halfWidth < maxSize && RoomAndCorridorAreValid(_digCenter, _halfWidth + 1, _halfWidth)) {
+                if (_halfWidth < maxSize) {
                     _halfWidth += 1;
                 }
+                ValidateDig();
                 return GameState.Digging;
             case PlayerAction.IncreaseBlueprintHeight:
-                if (_halfHeight < maxSize && RoomAndCorridorAreValid(_digCenter, _halfWidth, _halfHeight + 1)) {
+                if (_halfHeight < maxSize) {
                     _halfHeight += 1;
                 }
+                ValidateDig();
                 return GameState.Digging;
             case PlayerAction.DecreaseBlueprintHeight:
-                if (_halfHeight > minSize && RoomAndCorridorAreValid(_digCenter, _halfWidth, _halfHeight - 1)) {
+                if (_halfHeight > minSize) {
                     _halfHeight -= 1;
                 }
+                ValidateDig();
                 return GameState.Digging;
             case PlayerAction.MoveLeft:
-                ValidateCenterMove(_digCenter with { X = _digCenter.X - 1 });
+                MoveCenterAndValidate(_digCenter with { X = _digCenter.X - 1 });
                 return GameState.Digging;
             case PlayerAction.MoveRight:
-                ValidateCenterMove(_digCenter with { X = _digCenter.X + 1 });
+                MoveCenterAndValidate(_digCenter with { X = _digCenter.X + 1 });
                 return GameState.Digging;
             case PlayerAction.MoveUp:
-                ValidateCenterMove(_digCenter with { Y = _digCenter.Y - 1 });
+                MoveCenterAndValidate(_digCenter with { Y = _digCenter.Y - 1 });
                 return GameState.Digging;
             case PlayerAction.MoveDown:
-                ValidateCenterMove(_digCenter with { Y = _digCenter.Y + 1 });
+                MoveCenterAndValidate(_digCenter with { Y = _digCenter.Y + 1 });
                 return GameState.Digging;
-            case PlayerAction.SubmitRoomBlueprint:
+            case PlayerAction.SubmitRoomBlueprint when _isDigValid:
                 DigRoom(map);
                 return GameState.Moving;
             default:
                 return GameState.Digging;
         }
 
-        void ValidateCenterMove(Vector2 newCenterPosition) {
-            if (!RoomAndCorridorAreValid(newCenterPosition, _halfWidth, _halfHeight)) return;
+        void MoveCenterAndValidate(Vector2 newCenterPosition) {
             _digCenter = newCenterPosition;
             switch (_digDirection) {
                 case PlayerAction.DigLeft:
@@ -151,6 +162,7 @@ public static class RoomDigger {
                     _corridorBottomRight = _corridorBottomRight with { Y = _digCenter.Y };
                     break;
             }
+            ValidateDig();
         }
     }
 
@@ -176,22 +188,25 @@ public static class RoomDigger {
         DigRoom(map, false);
     }
 
-    private static bool RoomAndCorridorAreValid(Vector2 newPosition, int newHalfWidth, int newHalfHeight) {
-        Vector2 newRoomTopLeft = newPosition with { X = newPosition.X - newHalfWidth, Y = newPosition.Y - newHalfHeight };
-        Vector2 newRoomBottomRight = newPosition with { X = newPosition.X + newHalfWidth, Y = newPosition.Y + newHalfHeight };
+    private static void ValidateDig() {
+        Vector2 roomTopLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
+        Vector2 roomBottomRight = _digCenter with { X = _digCenter.X + _halfWidth, Y = _digCenter.Y + _halfHeight };
         if (_digDirection is PlayerAction.DigLeft or PlayerAction.DigRight) {
-            if (newRoomTopLeft.Y > _corridorTopLeft.Y || newRoomBottomRight.Y < _corridorBottomRight.Y) {
-                return false;
+            if (roomTopLeft.Y > _corridorTopLeft.Y || roomBottomRight.Y < _corridorBottomRight.Y) {
+                _isDigValid = false;
+                return;
             } 
         } else if (_digDirection is PlayerAction.DigUp or PlayerAction.DigDown){
-            if (newRoomTopLeft.X > _corridorTopLeft.X || newRoomBottomRight.X < _corridorBottomRight.X) {
-                return false;
+            if (roomTopLeft.X > _corridorTopLeft.X || roomBottomRight.X < _corridorBottomRight.X) {
+                _isDigValid = false;
+                return;
             }
         } 
-        if (!CorridorIsLongEnough(newRoomTopLeft, newRoomBottomRight)) {
-            return false;
+        if (!CorridorIsLongEnough(roomTopLeft, roomBottomRight)) {
+            _isDigValid = false;
+            return;
         }
-        return true;
+        _isDigValid = true;
     }
 
     private static bool CorridorIsLongEnough(Vector2 newRoomTopLeft, Vector2 newRoomBottomRight) {

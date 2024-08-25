@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonogameTest.map;
@@ -24,13 +25,11 @@ public class Game1 : Game {
     }
 
     protected override void Initialize() {
-        // TODO: Add your initialization logic here
-
+        _spriteBatch = new SpriteBatch(GraphicsDevice);
         base.Initialize();
     }
 
     protected override void LoadContent() {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
         Images.LoadImages(GraphicsDevice);
         _map = new Map(100, 100);
         _player = new Player(new Vector2(20, 10));
