@@ -176,14 +176,14 @@ public static class RoomDigger {
         int width = _halfWidth * 2;
         int height = _halfHeight * 2;
         Vector2 roomBottomRight = roomTopLeft with { X = roomTopLeft.X + width, Y = roomTopLeft.Y + height };
-        HashSet<Vector2> roomTiles = GetTileRegion(roomTopLeft, roomBottomRight);
-        if (digCorridor) {
-            HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
-            roomTiles.UnionWith(corridorTiles);
-        }
-        foreach (Vector2 position in roomTiles) {
-            map.SetTileAt(position, Tile.CreateOrcFloorTile());
-        }
+        // HashSet<Vector2> roomTiles = GetTileRegion(roomTopLeft, roomBottomRight);
+        // if (digCorridor) {
+        //     HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
+        //     roomTiles.UnionWith(corridorTiles);
+        // }
+        // foreach (Vector2 position in roomTiles) {
+        //     map.SetTileAt(position, Tile.CreateOrcFloorTile());
+        // }
         map.AddRoom(roomTopLeft, roomBottomRight);
     }
 
@@ -228,7 +228,7 @@ public static class RoomDigger {
         return corridorTiles.Count >= 6;
     }
 
-    private static HashSet<Vector2> GetTileRegion(Vector2 topLeft, Vector2 bottomRight) {
+    public static HashSet<Vector2> GetTileRegion(Vector2 topLeft, Vector2 bottomRight) {
         HashSet<Vector2> roomTiles = new();
         for (int y = (int)topLeft.Y; y <= bottomRight.Y; y++) {
             for (int x = (int)topLeft.X; x <= bottomRight.X; x++) {

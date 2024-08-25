@@ -30,18 +30,22 @@ public class Map {
         for (int y = 0; y < _grid.Count; y++) {
             for (int x = 0; x < _grid[y].Count; x++) {
                 Tile tile = _grid[y][x];
-                Vector2 position = new(x * Tile.Size, y * Tile.Size);
+                Vector2 position = new(x, y);
                 tile.Draw(spriteBatch, position);
             }
+        }
+
+        foreach (Room room in _rooms.Values) {
+            room.Draw(spriteBatch);
         }
     }
 
     public Tile GetTileAt(Vector2 position) {
-        return _grid[(int)position.Y][(int)position.X];
-    }
-
-    public void SetTileAt(Vector2 position, Tile tile) {
-        _grid[(int)position.Y][(int)position.X] = tile;
+        List<Room> containingRooms = _rooms.Values.Where(room => room.ContainsPosition(position)).ToList();
+        if (containingRooms.Count == 0) {
+            return _grid[(int)position.Y][(int)position.X];
+        }
+        return containingRooms.First().GetTileAt(position);
     }
 
     public int GetWidth() {
