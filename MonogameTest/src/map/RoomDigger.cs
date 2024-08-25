@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -12,6 +13,7 @@ public static class RoomDigger {
     private static PlayerAction _digDirection;
     private static int _halfWidth;
     private static int _halfHeight;
+    private static readonly int CorridorHalfWidth = 2;
     
     private static Vector2 _corridorTopLeft;
     private static Vector2 _corridorBottomRight;
@@ -39,8 +41,8 @@ public static class RoomDigger {
                 return GameState.Moving;
             }
             _digCenter = playerPosition with { X = playerPosition.X - distanceFromPlayer };
-            _corridorTopLeft = _digCenter with { Y = _digCenter.Y - 1 };
-            _corridorBottomRight = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
+            _corridorTopLeft = _digCenter with { Y = _digCenter.Y - CorridorHalfWidth };
+            _corridorBottomRight = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + CorridorHalfWidth };
             _digDirection = PlayerAction.DigLeft;
             ValidateDig();
             return GameState.Digging;
@@ -51,8 +53,8 @@ public static class RoomDigger {
                 return GameState.Moving;
             }
             _digCenter = playerPosition with { X = playerPosition.X + distanceFromPlayer };
-            _corridorTopLeft = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
-            _corridorBottomRight = _digCenter with { Y = _digCenter.Y + 1 };
+            _corridorTopLeft = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - CorridorHalfWidth };
+            _corridorBottomRight = _digCenter with { Y = _digCenter.Y + CorridorHalfWidth };
             _digDirection = PlayerAction.DigRight;
             ValidateDig();
             return GameState.Digging;
@@ -63,8 +65,8 @@ public static class RoomDigger {
                 return GameState.Moving;
             }
             _digCenter = playerPosition with { Y = playerPosition.Y - distanceFromPlayer };
-            _corridorTopLeft = _digCenter with { X = _digCenter.X - 1 };
-            _corridorBottomRight = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - 1 };
+            _corridorTopLeft = _digCenter with { X = _digCenter.X - CorridorHalfWidth };
+            _corridorBottomRight = playerPosition with { X = playerPosition.X + CorridorHalfWidth, Y = playerPosition.Y - 1 };
             _digDirection = PlayerAction.DigUp;
             ValidateDig();
             return GameState.Digging;
@@ -75,8 +77,8 @@ public static class RoomDigger {
                 return GameState.Moving;
             }
             _digCenter = playerPosition with { Y = playerPosition.Y + distanceFromPlayer };
-            _corridorTopLeft = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + 1 };
-            _corridorBottomRight = _digCenter with { X = _digCenter.X + 1 };
+            _corridorTopLeft = playerPosition with { X = playerPosition.X - CorridorHalfWidth, Y = playerPosition.Y + 1 };
+            _corridorBottomRight = _digCenter with { X = _digCenter.X + CorridorHalfWidth };
             _digDirection = PlayerAction.DigDown;
             ValidateDig();
             return GameState.Digging;
@@ -183,9 +185,10 @@ public static class RoomDigger {
             List<Vector2> roomTiles = room.GetTilePositions();
             HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
             room.AddDoorwayForCorridor(corridorTiles);
-            //corridorTiles.ExceptWith(roomTiles);
-            //Corridor corridor = new Corridor(corridorTiles);
-            //map.AddCorridor(corridorTiles);
+            corridorTiles.ExceptWith(roomTiles);
+            bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
+            Corridor corridor = new(_corridorTopLeft, _corridorBottomRight, corridorTiles.ToList(), isCorridorHorizontal);
+            map.AddCorridor(corridor);
         }
     }
 

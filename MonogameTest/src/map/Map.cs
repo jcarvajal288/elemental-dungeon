@@ -9,11 +9,13 @@ namespace MonogameTest.map;
 public class Map {
     private readonly List<List<Tile>> _grid;
     private readonly Dictionary<int, Room> _rooms;
+    private readonly List<Corridor> _corridors;
 
     public Map(int width, int height) {
         Random rng = new();
         _grid = [];
         _rooms = new Dictionary<int, Room>();
+        _corridors = [];
         for (int y = 0; y < height; y++) {
             _grid.Add([]);
             for (int x = 0; x < width; x++) {
@@ -38,14 +40,21 @@ public class Map {
         foreach (Room room in _rooms.Values) {
             room.Draw(spriteBatch);
         }
+        _corridors.ForEach(corridor => corridor.Draw(spriteBatch));
     }
 
     public Tile GetTileAt(Vector2 position) {
-        List<Room> containingRooms = _rooms.Values.Where(room => room.ContainsPosition(position)).ToList();
-        if (containingRooms.Count == 0) {
-            return _grid[(int)position.Y][(int)position.X];
+        List<Corridor> containingCorridors = _corridors.Where(corr => corr.ContainsPosition(position)).ToList();
+        if (containingCorridors.Count > 0) {
+            return containingCorridors.First().GetTileAt(position);
         }
-        return containingRooms.First().GetTileAt(position);
+        
+        List<Room> containingRooms = _rooms.Values.Where(room => room.ContainsPosition(position)).ToList();
+        if (containingRooms.Count > 0) {
+            return containingRooms.First().GetTileAt(position);
+        }
+        
+        return _grid[(int)position.Y][(int)position.X];
     }
 
     public int GetWidth() {
@@ -59,6 +68,10 @@ public class Map {
     public void AddRoom(Room room) {
         int id = _rooms.Count;
         _rooms.Add(id, room);
+    }
+
+    public void AddCorridor(Corridor corridor) {
+        _corridors.Add(corridor);
     }
 
     public int GetRoomIdForPosition(Vector2 position) {
