@@ -56,9 +56,9 @@ public class Map {
         return _grid.Count;
     }
 
-    public void AddRoom(Vector2 topLeft,  Vector2 bottomRight) {
+    public void AddRoom(Room room) {
         int id = _rooms.Count;
-        _rooms.Add(id, new Room(topLeft, bottomRight));
+        _rooms.Add(id, room);
     }
 
     public int GetRoomIdForPosition(Vector2 position) {

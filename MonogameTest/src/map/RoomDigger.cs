@@ -12,6 +12,7 @@ public static class RoomDigger {
     private static PlayerAction _digDirection;
     private static int _halfWidth;
     private static int _halfHeight;
+    
     private static Vector2 _corridorTopLeft;
     private static Vector2 _corridorBottomRight;
     
@@ -20,9 +21,9 @@ public static class RoomDigger {
     private static int _mapHeight;
     
     public static GameState CheckForNewDig(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map) {
-        const int distanceFromPlayer = 5;
-        _halfWidth = 2;
-        _halfHeight = 2;
+        const int distanceFromPlayer = 6;
+        _halfWidth = 3;
+        _halfHeight = 3;
         _mapWidth = map.GetWidth();
         _mapHeight = map.GetHeight();
         return playerAction switch {
@@ -105,8 +106,8 @@ public static class RoomDigger {
     }
 
     public static GameState AdjustBlueprint(PlayerAction playerAction, Map map) {
-        const int minSize = 2;
-        const int maxSize = 5;
+        const int minSize = 3;
+        const int maxSize = 6;
         switch (playerAction) {
             case PlayerAction.DecreaseBlueprintWidth:
                 if (_halfWidth > minSize) {
@@ -145,7 +146,7 @@ public static class RoomDigger {
                 MoveCenterAndValidate(_digCenter with { Y = _digCenter.Y + 1 });
                 return GameState.Digging;
             case PlayerAction.SubmitRoomBlueprint when _isDigValid:
-                DigRoom(map);
+                PerformDig(map);
                 return GameState.Moving;
             default:
                 return GameState.Digging;
@@ -171,27 +172,28 @@ public static class RoomDigger {
         }
     }
 
-    private static void DigRoom(Map map, bool digCorridor = true) {
+    private static void PerformDig(Map map, bool digCorridor = true) {
         Vector2 roomTopLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
         int width = _halfWidth * 2;
         int height = _halfHeight * 2;
         Vector2 roomBottomRight = roomTopLeft with { X = roomTopLeft.X + width, Y = roomTopLeft.Y + height };
-        // HashSet<Vector2> roomTiles = GetTileRegion(roomTopLeft, roomBottomRight);
-        // if (digCorridor) {
-        //     HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
-        //     roomTiles.UnionWith(corridorTiles);
-        // }
-        // foreach (Vector2 position in roomTiles) {
-        //     map.SetTileAt(position, Tile.CreateOrcFloorTile());
-        // }
-        map.AddRoom(roomTopLeft, roomBottomRight);
+        Room room = new(roomTopLeft, roomBottomRight);
+        map.AddRoom(room);
+        if (digCorridor) {
+            List<Vector2> roomTiles = room.GetTilePositions();
+            HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
+            room.AddDoorwayForCorridor(corridorTiles);
+            //corridorTiles.ExceptWith(roomTiles);
+            //Corridor corridor = new Corridor(corridorTiles);
+            //map.AddCorridor(corridorTiles);
+        }
     }
 
     public static void DigRoom(Map map, Vector2 center, int halfWidth, int halfHeight ) {
         _digCenter = center;
         _halfWidth = halfWidth;
         _halfHeight = halfHeight;
-        DigRoom(map, false);
+        PerformDig(map, false);
     }
 
     private static void ValidateDig() {
