@@ -61,6 +61,9 @@ public static class PlayerInput {
         if (JustPressed(Keys.Down)) {
             return IsPressed(Keys.LeftShift) ? PlayerAction.DecreaseBlueprintHeight : PlayerAction.MoveDown;
         }
+        if (JustPressed(Keys.Enter)) {
+            return PlayerAction.SubmitRoomBlueprint;
+        }
         
         return PlayerAction.NoAction;
     }

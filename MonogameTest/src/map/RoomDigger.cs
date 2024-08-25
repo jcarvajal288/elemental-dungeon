@@ -91,7 +91,7 @@ public static class RoomDigger {
         }
     }
 
-    public static void AdjustBlueprint(PlayerAction playerAction) {
+    public static GameState AdjustBlueprint(PlayerAction playerAction, Map map) {
         const int minSize = 2;
         const int maxSize = 5;
         switch (playerAction) {
@@ -99,34 +99,39 @@ public static class RoomDigger {
                 if (_halfWidth > minSize && RoomAndCorridorAreValid(_digCenter, _halfWidth - 1, _halfWidth)) {
                     _halfWidth -= 1;
                 }
-                break;
+                return GameState.Digging;
             case PlayerAction.IncreaseBlueprintWidth:
                 if (_halfWidth < maxSize && RoomAndCorridorAreValid(_digCenter, _halfWidth + 1, _halfWidth)) {
                     _halfWidth += 1;
                 }
-                break;
+                return GameState.Digging;
             case PlayerAction.IncreaseBlueprintHeight:
                 if (_halfHeight < maxSize && RoomAndCorridorAreValid(_digCenter, _halfWidth, _halfHeight + 1)) {
                     _halfHeight += 1;
                 }
-                break;
+                return GameState.Digging;
             case PlayerAction.DecreaseBlueprintHeight:
                 if (_halfHeight > minSize && RoomAndCorridorAreValid(_digCenter, _halfWidth, _halfHeight - 1)) {
                     _halfHeight -= 1;
                 }
-                break;
+                return GameState.Digging;
             case PlayerAction.MoveLeft:
                 ValidateCenterMove(_digCenter with { X = _digCenter.X - 1 });
-                break;
+                return GameState.Digging;
             case PlayerAction.MoveRight:
                 ValidateCenterMove(_digCenter with { X = _digCenter.X + 1 });
-                break;
+                return GameState.Digging;
             case PlayerAction.MoveUp:
                 ValidateCenterMove(_digCenter with { Y = _digCenter.Y - 1 });
-                break;
+                return GameState.Digging;
             case PlayerAction.MoveDown:
                 ValidateCenterMove(_digCenter with { Y = _digCenter.Y + 1 });
-                break;
+                return GameState.Digging;
+            case PlayerAction.SubmitRoomBlueprint:
+                DigRoom(map);
+                return GameState.Moving;
+            default:
+                return GameState.Digging;
         }
 
         void ValidateCenterMove(Vector2 newCenterPosition) {
@@ -149,6 +154,19 @@ public static class RoomDigger {
         }
     }
 
+    private static void DigRoom(Map map) {
+        Vector2 roomTopLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
+        int width = _halfWidth * 2;
+        int height = _halfHeight * 2;
+        Vector2 roomBottomRight = roomTopLeft with { X = roomTopLeft.X + width, Y = roomTopLeft.Y + height };
+        HashSet<Vector2> roomTiles = GetTileRegion(roomTopLeft, roomBottomRight);
+        HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
+        roomTiles.UnionWith(corridorTiles);
+        foreach (Vector2 position in roomTiles) {
+            map.SetTileAt(position, Tile.CreateOrcFloorTile());
+        }
+    }
+
     private static bool RoomAndCorridorAreValid(Vector2 newPosition, int newHalfWidth, int newHalfHeight) {
         Vector2 newRoomTopLeft = newPosition with { X = newPosition.X - newHalfWidth, Y = newPosition.Y - newHalfHeight };
         Vector2 newRoomBottomRight = newPosition with { X = newPosition.X + newHalfWidth, Y = newPosition.Y + newHalfHeight };
@@ -168,21 +186,20 @@ public static class RoomDigger {
     }
 
     private static bool CorridorIsLongEnough(Vector2 newRoomTopLeft, Vector2 newRoomBottomRight) {
-        HashSet<Vector2> roomTiles = new();
-        for (int y = (int)newRoomTopLeft.Y; y <= newRoomBottomRight.Y; y++) {
-            for (int x = (int)newRoomTopLeft.X; x <= newRoomBottomRight.X; x++) {
-                roomTiles.Add(new (x, y));
-            }
-        }
-        
-        HashSet<Vector2> corridorTiles = new();
-        for (int y = (int)_corridorTopLeft.Y; y <= _corridorBottomRight.Y; y++) {
-            for (int x = (int)_corridorTopLeft.X; x <= _corridorBottomRight.X; x++) {
-                corridorTiles.Add(new(x, y));
-            }
-        }
+        HashSet<Vector2> roomTiles = GetTileRegion(newRoomTopLeft, newRoomBottomRight);
+        HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
 
         corridorTiles.ExceptWith(roomTiles);
         return corridorTiles.Count >= 6;
+    }
+
+    private static HashSet<Vector2> GetTileRegion(Vector2 topLeft, Vector2 bottomRight) {
+        HashSet<Vector2> roomTiles = new();
+        for (int y = (int)topLeft.Y; y <= bottomRight.Y; y++) {
+            for (int x = (int)topLeft.X; x <= bottomRight.X; x++) {
+                roomTiles.Add(new (x, y));
+            }
+        }
+        return roomTiles;
     }
 }

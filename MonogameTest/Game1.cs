@@ -51,7 +51,7 @@ public class Game1 : Game {
             _player.SendAction(playerAction, _map);
             _gameState = RoomDigger.CheckForNewDig(_gameState, playerAction, _player.Position, _map);
         } else {
-            RoomDigger.AdjustBlueprint(playerAction);
+            _gameState = RoomDigger.AdjustBlueprint(playerAction, _map);
         }
 
         base.Update(gameTime);

@@ -41,7 +41,11 @@ public class Map {
         }
     }
 
-    public Tile GetTileAt(in Vector2 position) {
+    public Tile GetTileAt(Vector2 position) {
         return _grid[(int)position.Y][(int)position.X];
+    }
+
+    public void SetTileAt(Vector2 position, Tile tile) {
+        _grid[(int)position.Y][(int)position.X] = tile;
     }
 }
