@@ -35,11 +35,11 @@ public class Tile(Terrain terrain, int spriteIndex) {
     }
 
     private static Tile CreateBrownBrickWallTile() {
-        throw new NotImplementedException();
+        return new Tile(Terrain.BrownBrickWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.BrownBrickWall].Count));
     }
 
     private static Tile CreateBrownStoneWallTile() {
-        throw new NotImplementedException();
+        return new Tile(Terrain.BrownStoneWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.BrownStoneWall].Count));
     }
 
     private static Tile CreateCobbleStoneFloorTile() {
@@ -51,7 +51,7 @@ public class Tile(Terrain terrain, int spriteIndex) {
     }
     
     private static Tile CreateCrystalWallLightRedTile() {
-        throw new NotImplementedException();
+        return new Tile(Terrain.CrystalWallLightRed, 0);
     }
     
     private static Tile CreateGreyBrickWallTile() {
@@ -59,10 +59,10 @@ public class Tile(Terrain terrain, int spriteIndex) {
     }
 
     private static Tile CreateLimestoneFloorTile() {
-        throw new NotImplementedException();
+        return new Tile(Terrain.LimestoneFloor, Rng.Next(0, Images.TerrainSpriteSet[Terrain.LimestoneFloor].Count));
     }
 
-    public static Tile CreateOrcFloorTile() {
+    private static Tile CreateOrcFloorTile() {
         return new Tile(Terrain.OrcFloor, Rng.Next(0, Images.TerrainSpriteSet[Terrain.OrcFloor].Count));
     }
 

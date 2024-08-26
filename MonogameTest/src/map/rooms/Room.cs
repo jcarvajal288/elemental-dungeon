@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 namespace MonogameTest.map.rooms;
 
 public class Room() : Corridor {
-
     public Room(Vector2 topLeft, Vector2 bottomRight) : this() {
         TopLeft = topLeft;
         BottomRight = bottomRight;
@@ -14,8 +13,8 @@ public class Room() : Corridor {
         Grid = new Dictionary<Vector2, Tile>();
         Build();
     }
-    
-    private void Build() {
+
+    protected void Build() {
         HashSet<Vector2> positions = RoomDigger.GetTileRegion(TopLeft, BottomRight);
         foreach (Vector2 pos in positions) {
             Grid[pos] = Tile.CreateTileForTerrain(FloorTerrain);
@@ -46,5 +45,8 @@ public class Room() : Corridor {
         foreach (Vector2 position in edgePositions.Intersect(corridorTiles)) {
             Grid[position] = Tile.CreateTileForTerrain(FloorTerrain);
         }
+    }
+
+    protected void FillRoom() {
     }
 }

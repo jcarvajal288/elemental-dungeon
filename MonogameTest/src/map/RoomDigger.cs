@@ -180,8 +180,9 @@ public static class RoomDigger {
         int width = _halfWidth * 2;
         int height = _halfHeight * 2;
         Vector2 roomBottomRight = roomTopLeft with { X = roomTopLeft.X + width, Y = roomTopLeft.Y + height };
-        Room room = new(roomTopLeft, roomBottomRight);
+        Room room = new EarthElementalFont(roomTopLeft, roomBottomRight);
         map.AddRoom(room);
+        
         if (digCorridor) {
             List<Vector2> roomTiles = room.GetTilePositions();
             HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
