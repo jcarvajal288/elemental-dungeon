@@ -5,11 +5,11 @@ using Microsoft.Xna.Framework;
 namespace MonogameTest.map.rooms;
 
 public class Room() : Corridor {
-    public Room(Vector2 topLeft, Vector2 bottomRight) : this() {
+    public Room(Vector2 topLeft, Vector2 bottomRight, Terrain floorTerrain = Terrain.OrcFloor, Terrain wallTerrain = Terrain.OrcWall) : this() {
         TopLeft = topLeft;
         BottomRight = bottomRight;
-        FloorTerrain = Terrain.OrcFloor;
-        WallTerrain = Terrain.OrcWall;
+        FloorTerrain = floorTerrain;
+        WallTerrain = wallTerrain;
         Grid = new Dictionary<Vector2, Tile>();
         Build();
     }
