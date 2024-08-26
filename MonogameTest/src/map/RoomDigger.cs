@@ -12,6 +12,7 @@ public static class RoomDigger {
 
     private static Vector2 _digCenter;
     private static PlayerAction _digDirection;
+    private static Room _playerRoom;
     private static int _halfWidth;
     private static int _halfHeight;
     private static readonly int CorridorHalfWidth = 2;
@@ -23,12 +24,13 @@ public static class RoomDigger {
     private static int _mapWidth;
     private static int _mapHeight;
     
-    public static GameState CheckForNewDig(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map) {
+    public static GameState CheckForNewDig(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map, int playerRoomId) {
         const int distanceFromPlayer = 6;
         _halfWidth = 3;
         _halfHeight = 3;
         _mapWidth = map.GetWidth();
         _mapHeight = map.GetHeight();
+        _playerRoom = map.GetRoomForId(playerRoomId);
         return playerAction switch {
             PlayerAction.DigLeft => StartDigLeft(),
             PlayerAction.DigRight => StartDigRight(),
@@ -180,16 +182,21 @@ public static class RoomDigger {
         int width = _halfWidth * 2;
         int height = _halfHeight * 2;
         Vector2 roomBottomRight = roomTopLeft with { X = roomTopLeft.X + width, Y = roomTopLeft.Y + height };
-        Room room = new EarthElementalFont(roomTopLeft, roomBottomRight);
-        map.AddRoom(room);
+        Room newRoom = new EarthElementalFont(roomTopLeft, roomBottomRight);
+        map.AddRoom(newRoom);
         
         if (digCorridor) {
-            List<Vector2> roomTiles = room.GetTilePositions();
+            List<Vector2> newRoomTiles = newRoom.GetTilePositions();
+            List<Vector2> oldRoomTiles = _playerRoom.GetTilePositions();
             HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
-            corridorTiles.ExceptWith(roomTiles);
+            corridorTiles.ExceptWith(newRoomTiles);
+            corridorTiles.ExceptWith(oldRoomTiles);
+            
             bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
             Corridor corridor = new(corridorTiles.ToList(), isCorridorHorizontal);
-            room.AddDoorwayForCorridor(corridor.GetFloorTiles());
+            
+            newRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
+            _playerRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
             map.AddCorridor(corridor);
         }
     }

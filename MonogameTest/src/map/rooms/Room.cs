@@ -57,6 +57,5 @@ public class Room() : Corridor {
     }
 
 
-    protected void FillRoom() {
-    }
+    protected void FillRoom() {}
 }

@@ -13,6 +13,7 @@ public class EarthElementalFont(
     Terrain.LimestoneFloor, 
     Terrain.BrownBrickWall
 ) {
+    
     protected new void FillRoom() {
         throw new System.NotImplementedException();
     }

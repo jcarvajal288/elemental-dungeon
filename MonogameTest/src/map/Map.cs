@@ -83,4 +83,8 @@ public class Map {
             _ => -1
         };
     }
+
+    public Room GetRoomForId(int playerRoomId) {
+        return _rooms[playerRoomId];
+    }
 }
