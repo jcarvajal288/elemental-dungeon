@@ -186,10 +186,10 @@ public static class RoomDigger {
         if (digCorridor) {
             List<Vector2> roomTiles = room.GetTilePositions();
             HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
-            room.AddDoorwayForCorridor(corridorTiles);
             corridorTiles.ExceptWith(roomTiles);
             bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
             Corridor corridor = new(corridorTiles.ToList(), isCorridorHorizontal);
+            room.AddDoorwayForCorridor(corridor.GetFloorTiles());
             map.AddCorridor(corridor);
         }
     }

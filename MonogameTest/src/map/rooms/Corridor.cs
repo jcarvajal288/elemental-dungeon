@@ -48,4 +48,8 @@ public class Corridor {
     public Tile GetTileAt(Vector2 position) {
         return Grid[position];
     }
+
+    public List<Vector2> GetFloorTiles() {
+        return Grid.Keys.Where(pos => Grid[pos].IsWalkable()).ToList();
+    }
 }
