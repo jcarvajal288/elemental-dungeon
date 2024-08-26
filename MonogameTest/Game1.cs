@@ -49,7 +49,9 @@ public class Game1 : Game {
         if (_gameState == GameState.Moving) {
             _player.SendAction(playerAction, _map);
             int currentRoomId = _map.GetRoomIdForPosition(_player.Position);
-            _gameState = RoomDigger.CheckForNewDig(_gameState, playerAction, _player.Position, _map, currentRoomId);
+            if (currentRoomId >= 0) {
+                _gameState = RoomDigger.CheckForNewDig(_gameState, playerAction, _player.Position, _map, currentRoomId);
+            }
         } else {
             _gameState = RoomDigger.AdjustBlueprint(playerAction, _map);
         }

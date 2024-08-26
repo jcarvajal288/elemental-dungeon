@@ -5,20 +5,20 @@ namespace MonogameTest;
 public enum Terrain {
     BrownBrickWall,
     BrownStoneWall,
-    CobbleStoneFloor,
     CrystalWallLightBlue,
     CrystalWallLightRed,
-    GreyBrickWall,
+    MosaicFloor,
     LimestoneFloor,
     OrcFloor,
     OrcWall,
+    ReliefWall,
 }
 
 public static class TerrainExtensions {
     public static readonly List<Terrain> WalkableTerrain = [
         Terrain.OrcFloor,
+        Terrain.MosaicFloor,
         Terrain.LimestoneFloor,
-        Terrain.CobbleStoneFloor,
     ];
 }
     

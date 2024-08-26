@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,7 +7,7 @@ namespace MonogameTest;
 public static class Images {
     public static readonly Dictionary<Terrain, List<Texture2D>> TerrainSpriteSet = new();
     public static readonly Dictionary<PlayerSprites, Texture2D> PlayerSpriteSet = [];
-    public static readonly Dictionary<UISprites, Texture2D> UISpriteSet = [];
+    public static readonly Dictionary<UISprites, Texture2D> UiSpriteSet = [];
 
     private static Texture2D LoadTexture(GraphicsDevice graphicsDevice, string path) {
         using FileStream fileStream = File.OpenRead(path);
@@ -28,26 +27,12 @@ public static class Images {
                 LoadTexture(graphicsDevice, "Content/assets/terrain/brownStoneWall/stone_2_brown0.png")
             ]
         );
-        TerrainSpriteSet.Add(Terrain.CobbleStoneFloor, [
-                LoadTexture(graphicsDevice, "Content/assets/terrain/cobbleStoneFloor/cobble_blood_1_new.png"),
-                LoadTexture(graphicsDevice, "Content/assets/terrain/cobbleStoneFloor/cobble_blood_2_new.png"),
-                LoadTexture(graphicsDevice, "Content/assets/terrain/cobbleStoneFloor/cobble_blood_3_new.png"),
-                LoadTexture(graphicsDevice, "Content/assets/terrain/cobbleStoneFloor/cobble_blood_4_new.png"),
-            ]
-        );
         TerrainSpriteSet.Add(Terrain.CrystalWallLightBlue, [
                 LoadTexture(graphicsDevice, "Content/assets/terrain/crystals/crystal_wall_lightblue.png")
             ]
         );
         TerrainSpriteSet.Add(Terrain.CrystalWallLightRed, [
                 LoadTexture(graphicsDevice, "Content/assets/terrain/crystals/crystal_wall_lightred.png")
-            ]
-        );
-        TerrainSpriteSet.Add(Terrain.GreyBrickWall, [
-                LoadTexture(graphicsDevice, "Content/assets/terrain/greyBrickWall/brick_gray_0.png"),
-                LoadTexture(graphicsDevice, "Content/assets/terrain/greyBrickWall/brick_gray_1.png"),
-                LoadTexture(graphicsDevice, "Content/assets/terrain/greyBrickWall/brick_gray_2.png"),
-                LoadTexture(graphicsDevice, "Content/assets/terrain/greyBrickWall/brick_gray_3.png"),
             ]
         );
         TerrainSpriteSet.Add(Terrain.LimestoneFloor, [
@@ -61,6 +46,25 @@ public static class Images {
                 LoadTexture(graphicsDevice, "Content/assets/terrain/limestoneFloor/limestone_7.png"),
                 LoadTexture(graphicsDevice, "Content/assets/terrain/limestoneFloor/limestone_8.png"),
                 LoadTexture(graphicsDevice, "Content/assets/terrain/limestoneFloor/limestone_9.png"),
+            ]
+        );
+        TerrainSpriteSet.Add(Terrain.MosaicFloor, [
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_0.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_1.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_2.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_3.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_4.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_5.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_6.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_7.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_8.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_9.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_10.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_11.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_12.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_13.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_14.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/mosaicFloor/mosaic_15.png"),
             ]
         );
         TerrainSpriteSet.Add(Terrain.OrcFloor, [
@@ -81,10 +85,17 @@ public static class Images {
                 LoadTexture(graphicsDevice, "Content/assets/terrain/orcWall/orc_3.png")
             ]
         );
+        TerrainSpriteSet.Add(Terrain.ReliefWall, [
+                LoadTexture(graphicsDevice, "Content/assets/terrain/reliefWall/relief_0.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/reliefWall/relief_1.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/reliefWall/relief_2.png"),
+                LoadTexture(graphicsDevice, "Content/assets/terrain/reliefWall/relief_3.png"),
+            ]
+        );
         
         PlayerSpriteSet.Add(PlayerSprites.HumanMale, LoadTexture(graphicsDevice, "Content/assets/player/human_male.png"));
         PlayerSpriteSet.Add(PlayerSprites.RobeBlackAndGold, LoadTexture(graphicsDevice, "Content/assets/player/robe_black_gold.png"));
-        UISpriteSet.Add(UISprites.CursorGreen, LoadTexture(graphicsDevice, "Content/assets/ui/cursor_green.png"));
-        UISpriteSet.Add(UISprites.CursorRed, LoadTexture(graphicsDevice, "Content/assets/ui/cursor_red.png"));
+        UiSpriteSet.Add(UISprites.CursorGreen, LoadTexture(graphicsDevice, "Content/assets/ui/cursor_green.png"));
+        UiSpriteSet.Add(UISprites.CursorRed, LoadTexture(graphicsDevice, "Content/assets/ui/cursor_red.png"));
     }
 }

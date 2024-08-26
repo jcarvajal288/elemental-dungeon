@@ -90,8 +90,8 @@ public static class RoomDigger {
 
     public static void DrawRoomBlueprint(SpriteBatch spriteBatch) {
         Texture2D cursorSprite = _isDigValid
-            ? Images.UISpriteSet[UISprites.CursorGreen]
-            : Images.UISpriteSet[UISprites.CursorRed];
+            ? Images.UiSpriteSet[UISprites.CursorGreen]
+            : Images.UiSpriteSet[UISprites.CursorRed];
         Vector2 topLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
         int width = _halfWidth * 2 + 1;
         int height = _halfHeight * 2 + 1;

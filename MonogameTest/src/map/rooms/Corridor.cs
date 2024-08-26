@@ -8,8 +8,8 @@ namespace MonogameTest.map.rooms;
 public class Corridor {
     protected Vector2 TopLeft;
     protected Vector2 BottomRight;
-    protected Terrain FloorTerrain = Terrain.CobbleStoneFloor;
-    protected Terrain WallTerrain = Terrain.GreyBrickWall;
+    protected Terrain FloorTerrain = Terrain.MosaicFloor;
+    protected Terrain WallTerrain = Terrain.ReliefWall;
     
     protected Dictionary<Vector2, Tile> Grid;
 
