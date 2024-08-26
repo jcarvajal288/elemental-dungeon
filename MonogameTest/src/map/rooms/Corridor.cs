@@ -32,6 +32,14 @@ public class Corridor {
         }
     }
 
+    public Vector2 GetTopLeft() {
+        return TopLeft;
+    }
+
+    public Vector2 GetBottomRight() {
+        return BottomRight;
+    }
+
     protected Corridor() { }
 
     public bool ContainsPosition(Vector2 position) {

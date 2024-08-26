@@ -31,6 +31,7 @@ public static class RoomDigger {
         _mapWidth = map.GetWidth();
         _mapHeight = map.GetHeight();
         _playerRoom = map.GetRoomForId(playerRoomId);
+        Vector2 digOrigin = playerPosition;
         return playerAction switch {
             PlayerAction.DigLeft => StartDigLeft(),
             PlayerAction.DigRight => StartDigRight(),
@@ -43,20 +44,36 @@ public static class RoomDigger {
             if (map.GetTileAt(playerPosition with { X = playerPosition.X - 1 }).IsWalkable()) {
                 return GameState.Moving;
             }
-            _digCenter = playerPosition with { X = playerPosition.X - distanceFromPlayer };
+
+            // adjust corridor position if player is in the corner of their room
+            if ((int)digOrigin.Y - (int)_playerRoom.GetTopLeft().Y == 1) {
+                digOrigin = digOrigin with { Y = digOrigin.Y + 1 };
+            } else if ((int)_playerRoom.GetBottomRight().Y - (int)digOrigin.Y == 1) {
+                digOrigin = digOrigin with { Y = digOrigin.Y - 1 };
+            }
+            
+            _digCenter = digOrigin with { X = digOrigin.X - distanceFromPlayer };
             _corridorTopLeft = _digCenter with { Y = _digCenter.Y - CorridorHalfWidth };
-            _corridorBottomRight = playerPosition with { X = playerPosition.X - 1, Y = playerPosition.Y + CorridorHalfWidth };
+            _corridorBottomRight = digOrigin with { X = digOrigin.X - 1, Y = digOrigin.Y + CorridorHalfWidth };
             _digDirection = PlayerAction.DigLeft;
             ValidateDig();
             return GameState.Digging;
         }
 
         GameState StartDigRight() {
-            if (map.GetTileAt(playerPosition with { X = playerPosition.X + 1 }).IsWalkable()) {
+            if (map.GetTileAt(digOrigin with { X = digOrigin.X + 1 }).IsWalkable()) {
                 return GameState.Moving;
             }
-            _digCenter = playerPosition with { X = playerPosition.X + distanceFromPlayer };
-            _corridorTopLeft = playerPosition with { X = playerPosition.X + 1, Y = playerPosition.Y - CorridorHalfWidth };
+            
+            // adjust corridor position if player is in the corner of their room
+            if ((int)digOrigin.Y - (int)_playerRoom.GetTopLeft().Y == 1) {
+                digOrigin = digOrigin with { Y = digOrigin.Y + 1 };
+            } else if ((int)_playerRoom.GetBottomRight().Y - (int)digOrigin.Y == 1) {
+                digOrigin = digOrigin with { Y = digOrigin.Y - 1 };
+            }
+            
+            _digCenter = digOrigin with { X = digOrigin.X + distanceFromPlayer };
+            _corridorTopLeft = digOrigin with { X = digOrigin.X + 1, Y = digOrigin.Y - CorridorHalfWidth };
             _corridorBottomRight = _digCenter with { Y = _digCenter.Y + CorridorHalfWidth };
             _digDirection = PlayerAction.DigRight;
             ValidateDig();
@@ -64,23 +81,39 @@ public static class RoomDigger {
         }
 
         GameState StartDigUp() {
-            if (map.GetTileAt(playerPosition with { Y = playerPosition.Y - 1 }).IsWalkable()) {
+            if (map.GetTileAt(digOrigin with { Y = digOrigin.Y - 1 }).IsWalkable()) {
                 return GameState.Moving;
             }
-            _digCenter = playerPosition with { Y = playerPosition.Y - distanceFromPlayer };
+            
+            // adjust corridor position if player is in the corner of their room
+            if ((int)digOrigin.X - (int)_playerRoom.GetTopLeft().X == 1) {
+                digOrigin = digOrigin with { X = digOrigin.X + 1 };
+            } else if ((int)_playerRoom.GetBottomRight().X - (int)digOrigin.X == 1) {
+                digOrigin = digOrigin with { X = digOrigin.X - 1 };
+            }
+            
+            _digCenter = digOrigin with { Y = digOrigin.Y - distanceFromPlayer };
             _corridorTopLeft = _digCenter with { X = _digCenter.X - CorridorHalfWidth };
-            _corridorBottomRight = playerPosition with { X = playerPosition.X + CorridorHalfWidth, Y = playerPosition.Y - 1 };
+            _corridorBottomRight = digOrigin with { X = digOrigin.X + CorridorHalfWidth, Y = digOrigin.Y - 1 };
             _digDirection = PlayerAction.DigUp;
             ValidateDig();
             return GameState.Digging;
         }
 
         GameState StartDigDown() {
-            if (map.GetTileAt(playerPosition with { Y = playerPosition.Y + 1 }).IsWalkable()) {
+            if (map.GetTileAt(digOrigin with { Y = digOrigin.Y + 1 }).IsWalkable()) {
                 return GameState.Moving;
             }
-            _digCenter = playerPosition with { Y = playerPosition.Y + distanceFromPlayer };
-            _corridorTopLeft = playerPosition with { X = playerPosition.X - CorridorHalfWidth, Y = playerPosition.Y + 1 };
+            
+            // adjust corridor position if player is in the corner of their room
+            if ((int)digOrigin.X - (int)_playerRoom.GetTopLeft().X == 1) {
+                digOrigin = digOrigin with { X = digOrigin.X + 1 };
+            } else if ((int)_playerRoom.GetBottomRight().X - (int)digOrigin.X == 1) {
+                digOrigin = digOrigin with { X = digOrigin.X - 1 };
+            }
+            
+            _digCenter = digOrigin with { Y = digOrigin.Y + distanceFromPlayer };
+            _corridorTopLeft = digOrigin with { X = digOrigin.X - CorridorHalfWidth, Y = digOrigin.Y + 1 };
             _corridorBottomRight = _digCenter with { X = _digCenter.X + CorridorHalfWidth };
             _digDirection = PlayerAction.DigDown;
             ValidateDig();
