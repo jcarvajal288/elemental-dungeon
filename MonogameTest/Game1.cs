@@ -1,7 +1,5 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.ViewportAdapters;
 using MonogameTest.map;
@@ -56,10 +54,11 @@ public class Game1 : Game {
             _player.SendAction(playerAction, _map);
             CenterCameraOn(_player.Position);
             int currentRoomId = _map.GetRoomIdForPosition(_player.Position);
-            if (currentRoomId >= 0) {
+            if (currentRoomId >= 0) { // if player is not in a corridor
                 _gameState = RoomDigger.CheckForNewDig(_gameState, playerAction, _player.Position, _map, currentRoomId);
             }
         } else {
+            CenterCameraOn(RoomDigger.DigCenter);
             _gameState = RoomDigger.AdjustBlueprint(playerAction, _map);
         }
 
@@ -67,7 +66,7 @@ public class Game1 : Game {
     }
 
     private void CenterCameraOn(Vector2 newPosition) {
-        Vector2 newFocus = new(newPosition.X * Tile.Size, newPosition.Y * Tile.Size);
+        Vector2 newFocus = new((newPosition.X + 1) * Tile.Size, (newPosition.Y + 1) * Tile.Size);
         _camera.LookAt(newFocus);
     }
 

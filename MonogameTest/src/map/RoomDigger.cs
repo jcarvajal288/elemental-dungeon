@@ -1,5 +1,3 @@
-
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -23,6 +21,8 @@ public static class RoomDigger {
     private static bool _isDigValid;
     private static int _mapWidth;
     private static int _mapHeight;
+    
+    public static Vector2 DigCenter => _digCenter;
     
     public static GameState CheckForNewDig(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map, int playerRoomId) {
         const int distanceFromPlayer = 6;
