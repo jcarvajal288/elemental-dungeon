@@ -184,7 +184,7 @@ public static class RoomDigger {
                 MoveCenterAndValidate(_digCenter with { Y = _digCenter.Y + 1 });
                 return GameState.Digging;
             case PlayerAction.SubmitRoomBlueprint when _isDigValid:
-                PerformDig(map);
+                PerformDig(RoomType.EarthElementalFont, map);
                 return GameState.Moving;
             default:
                 return GameState.Digging;
@@ -210,12 +210,12 @@ public static class RoomDigger {
         }
     }
 
-    private static void PerformDig(Map map, bool digCorridor = true) {
+    private static void PerformDig(RoomType roomType, Map map, bool digCorridor = true) {
         Vector2 roomTopLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
         int width = _halfWidth * 2;
         int height = _halfHeight * 2;
         Vector2 roomBottomRight = roomTopLeft with { X = roomTopLeft.X + width, Y = roomTopLeft.Y + height };
-        Room newRoom = new EarthElementalFont(roomTopLeft, roomBottomRight);
+        Room newRoom = Room.CreateRoom(roomType, roomTopLeft, roomBottomRight);
         map.AddRoom(newRoom);
         
         if (digCorridor) {
@@ -234,11 +234,11 @@ public static class RoomDigger {
         }
     }
 
-    public static void DigRoom(Map map, Vector2 center, int halfWidth, int halfHeight ) {
+    public static void DigRoom(RoomType roomType, Map map, Vector2 center, int halfWidth, int halfHeight ) {
         _digCenter = center;
         _halfWidth = halfWidth;
         _halfHeight = halfHeight;
-        PerformDig(map, false);
+        PerformDig(roomType, map, false);
     }
 
     private static void ValidateDig() {

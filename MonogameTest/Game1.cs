@@ -33,7 +33,7 @@ public class Game1 : Game {
         Images.LoadImages(GraphicsDevice);
         _map = new Map(100, 100);
         _player = new Player(new Vector2(20, 10));
-        RoomDigger.DigRoom(_map, new Vector2(20, 10), 3, 3);
+        RoomDigger.DigRoom(RoomType.StartingRoom, _map, new Vector2(20, 10), 3, 3);
     }
     
     protected override void Update(GameTime gameTime) {

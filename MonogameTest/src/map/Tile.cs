@@ -34,11 +34,11 @@ public class Tile(Terrain terrain, int spriteIndex) {
         };
     }
 
-    private static Tile CreateBrownBrickWallTile() {
+    public static Tile CreateBrownBrickWallTile() {
         return new Tile(Terrain.BrownBrickWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.BrownBrickWall].Count));
     }
 
-    private static Tile CreateBrownStoneWallTile() {
+    public static Tile CreateBrownStoneWallTile() {
         return new Tile(Terrain.BrownStoneWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.BrownStoneWall].Count));
     }
 
@@ -46,19 +46,19 @@ public class Tile(Terrain terrain, int spriteIndex) {
         return new Tile(Terrain.CrystalWallLightBlue, 0);
     }
     
-    private static Tile CreateCrystalWallLightRedTile() {
+    public static Tile CreateCrystalWallLightRedTile() {
         return new Tile(Terrain.CrystalWallLightRed, 0);
     }
 
-    private static Tile CreateLimestoneFloorTile() {
+    public static Tile CreateLimestoneFloorTile() {
         return new Tile(Terrain.LimestoneFloor, Rng.Next(0, Images.TerrainSpriteSet[Terrain.LimestoneFloor].Count));
     }
 
-    private static Tile CreateMosaicFloorTile() {
+    public static Tile CreateMosaicFloorTile() {
         return new Tile(Terrain.MosaicFloor, Rng.Next(0, Images.TerrainSpriteSet[Terrain.MosaicFloor].Count));
     }
 
-    private static Tile CreateOrcFloorTile() {
+    public static Tile CreateOrcFloorTile() {
         return new Tile(Terrain.OrcFloor, Rng.Next(0, Images.TerrainSpriteSet[Terrain.OrcFloor].Count));
     }
 
@@ -66,7 +66,7 @@ public class Tile(Terrain terrain, int spriteIndex) {
         return new Tile(Terrain.OrcWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.OrcWall].Count));
     }
 
-    private static Tile CreateReliefWallTile() {
+    public static Tile CreateReliefWallTile() {
         return new Tile(Terrain.ReliefWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.ReliefWall].Count));
     }
 }

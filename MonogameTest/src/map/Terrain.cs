@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MonogameTest;
+namespace MonogameTest.map;
 
 public enum Terrain {
     BrownBrickWall,

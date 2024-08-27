@@ -2,20 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using MonogameTest.map.rooms;
 
-namespace MonogameTest.map.rooms;
+namespace MonogameTest.map;
 
-public class Room() : Corridor {
-    public Room(Vector2 topLeft, Vector2 bottomRight, Terrain floorTerrain = Terrain.OrcFloor, Terrain wallTerrain = Terrain.OrcWall) : this() {
+public abstract class Room() : Corridor {
+    protected Room(Vector2 topLeft, Vector2 bottomRight, Terrain floorTerrain = Terrain.OrcFloor, Terrain wallTerrain = Terrain.OrcWall) : this() {
         TopLeft = topLeft;
         BottomRight = bottomRight;
         FloorTerrain = floorTerrain;
         WallTerrain = wallTerrain;
         Grid = new Dictionary<Vector2, Tile>();
-        Build();
+        BuildWallsAndFloor();
+        // ReSharper disable once VirtualMemberCallInConstructor
+        FillRoom();
     }
 
-    protected void Build() {
+    private void BuildWallsAndFloor() {
         HashSet<Vector2> positions = RoomDigger.GetTileRegion(TopLeft, BottomRight);
         foreach (Vector2 pos in positions) {
             Grid[pos] = Tile.CreateTileForTerrain(FloorTerrain);
@@ -57,5 +60,13 @@ public class Room() : Corridor {
     }
 
 
-    protected void FillRoom() {}
+    protected abstract void FillRoom();
+
+    public static Room CreateRoom(RoomType roomType, Vector2 topLeft, Vector2 bottomRight) {
+        return roomType switch {
+            RoomType.EarthElementalFont => new EarthElementalFont(topLeft, bottomRight),
+            RoomType.StartingRoom => new StartingRoom(topLeft, bottomRight),
+            _ => throw new ArgumentOutOfRangeException(nameof(roomType), roomType, null)
+        };
+    }
 }
