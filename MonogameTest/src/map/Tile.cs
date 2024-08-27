@@ -7,6 +7,8 @@ namespace MonogameTest.map;
 public class Tile(Terrain terrain, int spriteIndex) {
     public const int Size = 32;
     private static readonly Random Rng = new();
+    
+    public Terrain Terrain => terrain;
 
     public void Draw(SpriteBatch spriteBatch, Vector2 position) {
         Vector2 pixelPosition = new(position.X * Size, position.Y * Size);

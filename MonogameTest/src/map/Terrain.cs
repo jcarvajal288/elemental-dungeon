@@ -20,5 +20,11 @@ public static class TerrainExtensions {
         Terrain.MosaicFloor,
         Terrain.LimestoneFloor,
     ];
+
+    public static readonly List<Terrain> DiggableTerrain = [
+        Terrain.OrcWall,
+        Terrain.CrystalWallLightBlue,
+        Terrain.CrystalWallLightRed,
+    ];
 }
     

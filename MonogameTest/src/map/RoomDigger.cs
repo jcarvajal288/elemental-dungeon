@@ -56,7 +56,7 @@ public static class RoomDigger {
             _corridorTopLeft = _digCenter with { Y = _digCenter.Y - CorridorHalfWidth };
             _corridorBottomRight = digOrigin with { X = digOrigin.X - 1, Y = digOrigin.Y + CorridorHalfWidth };
             _digDirection = PlayerAction.DigLeft;
-            ValidateDig();
+            ValidateDig(map);
             return GameState.Digging;
         }
 
@@ -76,7 +76,7 @@ public static class RoomDigger {
             _corridorTopLeft = digOrigin with { X = digOrigin.X + 1, Y = digOrigin.Y - CorridorHalfWidth };
             _corridorBottomRight = _digCenter with { Y = _digCenter.Y + CorridorHalfWidth };
             _digDirection = PlayerAction.DigRight;
-            ValidateDig();
+            ValidateDig(map);
             return GameState.Digging;
         }
 
@@ -96,7 +96,7 @@ public static class RoomDigger {
             _corridorTopLeft = _digCenter with { X = _digCenter.X - CorridorHalfWidth };
             _corridorBottomRight = digOrigin with { X = digOrigin.X + CorridorHalfWidth, Y = digOrigin.Y - 1 };
             _digDirection = PlayerAction.DigUp;
-            ValidateDig();
+            ValidateDig(map);
             return GameState.Digging;
         }
 
@@ -116,7 +116,7 @@ public static class RoomDigger {
             _corridorTopLeft = digOrigin with { X = digOrigin.X - CorridorHalfWidth, Y = digOrigin.Y + 1 };
             _corridorBottomRight = _digCenter with { X = _digCenter.X + CorridorHalfWidth };
             _digDirection = PlayerAction.DigDown;
-            ValidateDig();
+            ValidateDig(map);
             return GameState.Digging;
         }
     }
@@ -151,25 +151,25 @@ public static class RoomDigger {
                 if (_halfWidth > minSize) {
                     _halfWidth -= 1;
                 }
-                ValidateDig();
+                ValidateDig(map);
                 return GameState.Digging;
             case PlayerAction.IncreaseBlueprintWidth:
                 if (_halfWidth < maxSize) {
                     _halfWidth += 1;
                 }
-                ValidateDig();
+                ValidateDig(map);
                 return GameState.Digging;
             case PlayerAction.IncreaseBlueprintHeight:
                 if (_halfHeight < maxSize) {
                     _halfHeight += 1;
                 }
-                ValidateDig();
+                ValidateDig(map);
                 return GameState.Digging;
             case PlayerAction.DecreaseBlueprintHeight:
                 if (_halfHeight > minSize) {
                     _halfHeight -= 1;
                 }
-                ValidateDig();
+                ValidateDig(map);
                 return GameState.Digging;
             case PlayerAction.MoveLeft:
                 MoveCenterAndValidate(_digCenter with { X = _digCenter.X - 1 });
@@ -206,7 +206,7 @@ public static class RoomDigger {
                     _corridorBottomRight = _corridorBottomRight with { Y = _digCenter.Y };
                     break;
             }
-            ValidateDig();
+            ValidateDig(map);
         }
     }
 
@@ -241,7 +241,7 @@ public static class RoomDigger {
         PerformDig(roomType, map, false);
     }
 
-    private static void ValidateDig() {
+    private static void ValidateDig(Map map) {
         Vector2 roomTopLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
         Vector2 roomBottomRight = _digCenter with { X = _digCenter.X + _halfWidth, Y = _digCenter.Y + _halfHeight };
         if (_digDirection is PlayerAction.DigLeft or PlayerAction.DigRight) {
@@ -264,6 +264,15 @@ public static class RoomDigger {
             _isDigValid = false;
             return;
         }
+        
+        HashSet<Vector2> blueprintTiles = GetTileRegion(roomTopLeft, roomBottomRight);
+        blueprintTiles.UnionWith(GetTileRegion(_corridorTopLeft, _corridorBottomRight));
+        blueprintTiles.ExceptWith(_playerRoom.GetTilePositions());
+        if (blueprintTiles.Any(tile => !TerrainExtensions.DiggableTerrain.Contains(map.GetTileAt(tile).Terrain))) {
+            _isDigValid = false;
+            return;
+        }
+            
         _isDigValid = true;
     }
 
