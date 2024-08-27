@@ -41,7 +41,7 @@ public static class RoomDigger {
         };
 
         GameState StartDigLeft() {
-            if (map.GetTileAt(playerPosition with { X = playerPosition.X - 1 }).IsWalkable()) {
+            if (!_playerRoom.GetEdgePositions().Contains(playerPosition with { X = playerPosition.X - 1 })) {
                 return GameState.Moving;
             }
 
@@ -61,7 +61,7 @@ public static class RoomDigger {
         }
 
         GameState StartDigRight() {
-            if (map.GetTileAt(digOrigin with { X = digOrigin.X + 1 }).IsWalkable()) {
+            if (!_playerRoom.GetEdgePositions().Contains(digOrigin with { X = digOrigin.X + 1 })) {
                 return GameState.Moving;
             }
             
@@ -81,7 +81,7 @@ public static class RoomDigger {
         }
 
         GameState StartDigUp() {
-            if (map.GetTileAt(digOrigin with { Y = digOrigin.Y - 1 }).IsWalkable()) {
+            if (!_playerRoom.GetEdgePositions().Contains(digOrigin with { Y = digOrigin.Y - 1 })) {
                 return GameState.Moving;
             }
             
@@ -101,7 +101,7 @@ public static class RoomDigger {
         }
 
         GameState StartDigDown() {
-            if (map.GetTileAt(digOrigin with { Y = digOrigin.Y + 1 }).IsWalkable()) {
+            if (!_playerRoom.GetEdgePositions().Contains(digOrigin with { Y = digOrigin.Y + 1 })) {
                 return GameState.Moving;
             }
             

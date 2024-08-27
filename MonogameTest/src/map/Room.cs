@@ -24,14 +24,14 @@ public abstract class Room() : Corridor {
             Grid[pos] = Tile.CreateTileForTerrain(FloorTerrain);
         }
 
-        List<Vector2> wallPositions = GetEdgePositions(positions.ToList());
+        List<Vector2> wallPositions = GetEdgePositions();
         foreach (Vector2 pos in wallPositions) {
             Grid[pos] = Tile.CreateTileForTerrain(WallTerrain);
         }
     }
 
-    private List<Vector2> GetEdgePositions(List<Vector2> positions) {
-        List<Vector2> wallPositions = positions.Where(pos => {
+    public List<Vector2> GetEdgePositions() {
+        List<Vector2> wallPositions = GetTilePositions().Where(pos => {
             return (int)pos.X == (int)TopLeft.X || 
                    (int)pos.Y == (int)TopLeft.Y ||
                    (int)pos.X == (int)BottomRight.X ||
@@ -45,7 +45,7 @@ public abstract class Room() : Corridor {
     }
 
     public void AddDoorwayForCorridor(List<Vector2> corridorFloorTiles) {
-        List<Vector2> edgePositions = GetEdgePositions(Grid.Keys.ToList());
+        List<Vector2> edgePositions = GetEdgePositions();
         List<Vector2> doorwayPositions = edgePositions.Where(AdjacentToAnyCorridorFloor).ToList();
         foreach (Vector2 position in doorwayPositions) {
             Grid[position] = Tile.CreateTileForTerrain(FloorTerrain);
@@ -59,9 +59,6 @@ public abstract class Room() : Corridor {
         }
     }
 
-
-    protected abstract void FillRoom();
-
     public static Room CreateRoom(RoomType roomType, Vector2 topLeft, Vector2 bottomRight) {
         return roomType switch {
             RoomType.EarthElementalFont => new EarthElementalFont(topLeft, bottomRight),
@@ -69,4 +66,6 @@ public abstract class Room() : Corridor {
             _ => throw new ArgumentOutOfRangeException(nameof(roomType), roomType, null)
         };
     }
+
+    protected abstract void FillRoom();
 }
