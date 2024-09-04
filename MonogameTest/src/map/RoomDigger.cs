@@ -24,7 +24,7 @@ public static class RoomDigger {
     
     public static Vector2 DigCenter => _digCenter;
     
-    public static GameState CheckForNewDig(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map, int playerRoomId) {
+    public static bool IsNewDigValid(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map, int playerRoomId) {
         const int distanceFromPlayer = 6;
         _halfWidth = 3;
         _halfHeight = 3;
@@ -37,12 +37,12 @@ public static class RoomDigger {
             PlayerAction.DigRight => StartDigRight(),
             PlayerAction.DigUp => StartDigUp(),
             PlayerAction.DigDown => StartDigDown(),
-            _ => gameState
+            _ => false
         };
 
-        GameState StartDigLeft() {
+        bool StartDigLeft() {
             if (!_playerRoom.GetEdgePositions().Contains(playerPosition with { X = playerPosition.X - 1 })) {
-                return GameState.Moving;
+                return false;
             }
 
             // adjust corridor position if player is in the corner of their room
@@ -57,12 +57,12 @@ public static class RoomDigger {
             _corridorBottomRight = digOrigin with { X = digOrigin.X - 1, Y = digOrigin.Y + CorridorHalfWidth };
             _digDirection = PlayerAction.DigLeft;
             ValidateDig(map);
-            return GameState.Digging;
+            return true;
         }
 
-        GameState StartDigRight() {
+        bool StartDigRight() {
             if (!_playerRoom.GetEdgePositions().Contains(digOrigin with { X = digOrigin.X + 1 })) {
-                return GameState.Moving;
+                return false;
             }
             
             // adjust corridor position if player is in the corner of their room
@@ -77,12 +77,12 @@ public static class RoomDigger {
             _corridorBottomRight = _digCenter with { Y = _digCenter.Y + CorridorHalfWidth };
             _digDirection = PlayerAction.DigRight;
             ValidateDig(map);
-            return GameState.Digging;
+            return true;
         }
 
-        GameState StartDigUp() {
+        bool StartDigUp() {
             if (!_playerRoom.GetEdgePositions().Contains(digOrigin with { Y = digOrigin.Y - 1 })) {
-                return GameState.Moving;
+                return false;
             }
             
             // adjust corridor position if player is in the corner of their room
@@ -97,12 +97,12 @@ public static class RoomDigger {
             _corridorBottomRight = digOrigin with { X = digOrigin.X + CorridorHalfWidth, Y = digOrigin.Y - 1 };
             _digDirection = PlayerAction.DigUp;
             ValidateDig(map);
-            return GameState.Digging;
+            return true;
         }
 
-        GameState StartDigDown() {
+        bool StartDigDown() {
             if (!_playerRoom.GetEdgePositions().Contains(digOrigin with { Y = digOrigin.Y + 1 })) {
-                return GameState.Moving;
+                return false;
             }
             
             // adjust corridor position if player is in the corner of their room
@@ -117,7 +117,7 @@ public static class RoomDigger {
             _corridorBottomRight = _digCenter with { X = _digCenter.X + CorridorHalfWidth };
             _digDirection = PlayerAction.DigDown;
             ValidateDig(map);
-            return GameState.Digging;
+            return true;
         }
     }
 

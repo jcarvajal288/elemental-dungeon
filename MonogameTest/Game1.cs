@@ -55,7 +55,9 @@ public class Game1 : Game {
             CenterCameraOn(_player.Position);
             int currentRoomId = _map.GetRoomIdForPosition(_player.Position);
             if (currentRoomId >= 0) { // if player is not in a corridor
-                _gameState = RoomDigger.CheckForNewDig(_gameState, playerAction, _player.Position, _map, currentRoomId);
+                if (RoomDigger.IsNewDigValid(_gameState, playerAction, _player.Position, _map, currentRoomId)) {
+                    _gameState = GameState.Digging;
+                }
             }
         } else {
             CenterCameraOn(RoomDigger.DigCenter);
