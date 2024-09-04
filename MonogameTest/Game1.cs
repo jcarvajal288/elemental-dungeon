@@ -47,7 +47,7 @@ public class Game1 : Game {
     }
     
     protected override void Update(GameTime gameTime) {
-        _gameState = InputHandler.HandleInput(_gameState, _player, _map);
+        _gameState = InputHandler.HandleInput(_gameState, _player, _map, _digDialog);
 
         switch (_gameState) {
             case GameState.Exit:

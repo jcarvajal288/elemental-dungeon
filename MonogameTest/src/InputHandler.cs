@@ -5,7 +5,7 @@ using MonogameTest.player;
 namespace MonogameTest;
 
 public static class InputHandler {
-    public static GameState HandleInput(GameState gameState, Player player, Map map) {
+    public static GameState HandleInput(GameState gameState, Player player, Map map, DigDialog digDialog) {
         PlayerAction playerAction = PlayerInput.ReadKeyboard(gameState);
         if (playerAction == PlayerAction.Exit) {
             return OnExit(gameState);
@@ -20,7 +20,7 @@ public static class InputHandler {
         }
 
         if (gameState == GameState.InDigDialog) {
-            return DigDialog.HandleInput(playerAction);
+            return digDialog.HandleInput(playerAction);
         }
 
         return gameState;

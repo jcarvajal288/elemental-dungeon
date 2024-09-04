@@ -78,6 +78,12 @@ public static class PlayerInput {
         if (JustPressed(Keys.Enter)) {
             return PlayerAction.SubmitDigDialog;
         }
+        if (JustPressed(Keys.Up)) {
+            return PlayerAction.MoveUp;
+        } 
+        if (JustPressed(Keys.Down)) {
+            return PlayerAction.MoveDown;
+        }
         return PlayerAction.NoAction;
     }
 
