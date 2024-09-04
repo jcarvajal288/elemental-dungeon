@@ -41,31 +41,23 @@ public class Game1 : Game {
     }
     
     protected override void Update(GameTime gameTime) {
-        PlayerAction playerAction = PlayerInput.ReadKeyboard(_gameState);
-        if (playerAction == PlayerAction.Exit) {
-            if (_gameState == GameState.Moving) {
+        _gameState = InputHandler.HandleInput(_gameState, _player, _map);
+
+        switch (_gameState) {
+            case GameState.Exit:
                 Exit();
-            } else {
-                _gameState = GameState.Moving;
-            }
-        } 
-        
-        if (_gameState == GameState.Moving) {
-            _player.SendAction(playerAction, _map);
-            CenterCameraOn(_player.Position);
-            int currentRoomId = _map.GetRoomIdForPosition(_player.Position);
-            if (currentRoomId >= 0) { // if player is not in a corridor
-                if (RoomDigger.IsNewDigValid(_gameState, playerAction, _player.Position, _map, currentRoomId)) {
-                    _gameState = GameState.Digging;
-                }
-            }
-        } else {
-            CenterCameraOn(RoomDigger.DigCenter);
-            _gameState = RoomDigger.AdjustBlueprint(playerAction, _map);
+                break;
+            case GameState.Moving:
+                CenterCameraOn(_player.Position);
+                break;
+            case GameState.Digging:
+                CenterCameraOn(RoomDigger.DigCenter);
+                break;
         }
 
         base.Update(gameTime);
     }
+
 
     private void CenterCameraOn(Vector2 newPosition) {
         Vector2 newFocus = new((newPosition.X + 1) * Tile.Size, (newPosition.Y + 1) * Tile.Size);
