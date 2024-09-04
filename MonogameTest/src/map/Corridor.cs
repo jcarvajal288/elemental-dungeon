@@ -18,7 +18,7 @@ public class Corridor {
         BottomRight = new Vector2(x: tiles.Max(tile => tile.X), y: tiles.Max(tile => tile.Y));
         Grid = new Dictionary<Vector2, Tile>();
         
-        HashSet<Vector2> positions = RoomDigger.GetTileRegion(TopLeft, BottomRight);
+        HashSet<Vector2> positions = Map.GetTileRegion(TopLeft, BottomRight);
         foreach (Vector2 pos in positions) {
             Grid[pos] = Tile.CreateTileForTerrain(FloorTerrain);
         }

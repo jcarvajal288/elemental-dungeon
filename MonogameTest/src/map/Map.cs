@@ -87,4 +87,14 @@ public class Map {
     public Room GetRoomForId(int playerRoomId) {
         return _rooms[playerRoomId];
     }
+
+    public static HashSet<Vector2> GetTileRegion(Vector2 topLeft, Vector2 bottomRight) {
+        HashSet<Vector2> roomTiles = new();
+        for (int y = (int)topLeft.Y; y <= bottomRight.Y; y++) {
+            for (int x = (int)topLeft.X; x <= bottomRight.X; x++) {
+                roomTiles.Add(new Vector2(x, y));
+            }
+        }
+        return roomTiles;
+    }
 }

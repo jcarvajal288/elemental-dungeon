@@ -19,7 +19,7 @@ public abstract class Room() : Corridor {
     }
 
     private void BuildWallsAndFloor() {
-        HashSet<Vector2> positions = RoomDigger.GetTileRegion(TopLeft, BottomRight);
+        HashSet<Vector2> positions = Map.GetTileRegion(TopLeft, BottomRight);
         foreach (Vector2 pos in positions) {
             Grid[pos] = Tile.CreateTileForTerrain(FloorTerrain);
         }

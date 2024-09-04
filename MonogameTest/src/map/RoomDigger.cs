@@ -6,25 +6,25 @@ using MonogameTest.map.rooms;
 
 namespace MonogameTest.map;
 
-public static class RoomDigger {
+public class RoomDigger {
 
-    private static Vector2 _digCenter;
-    private static PlayerAction _digDirection;
-    private static Room _playerRoom;
-    private static int _halfWidth;
-    private static int _halfHeight;
-    private static readonly int CorridorHalfWidth = 2;
+    private Vector2 _digCenter;
+    private PlayerAction _digDirection;
+    private Room _playerRoom;
+    private int _halfWidth;
+    private int _halfHeight;
+    private readonly int CorridorHalfWidth = 2;
     
-    private static Vector2 _corridorTopLeft;
-    private static Vector2 _corridorBottomRight;
+    private Vector2 _corridorTopLeft;
+    private Vector2 _corridorBottomRight;
     
-    private static bool _isDigValid;
-    private static int _mapWidth;
-    private static int _mapHeight;
+    private bool _isDigValid;
+    private int _mapWidth;
+    private int _mapHeight;
     
-    public static Vector2 DigCenter => _digCenter;
+    public Vector2 DigCenter => _digCenter;
     
-    public static bool IsNewDigValid(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map, int playerRoomId) {
+    public bool IsNewDigValid(GameState gameState, PlayerAction playerAction, Vector2 playerPosition, Map map, int playerRoomId) {
         const int distanceFromPlayer = 6;
         _halfWidth = 3;
         _halfHeight = 3;
@@ -121,7 +121,7 @@ public static class RoomDigger {
         }
     }
 
-    public static void DrawRoomBlueprint(SpriteBatch spriteBatch) {
+    public void DrawRoomBlueprint(SpriteBatch spriteBatch) {
         Texture2D cursorSprite = _isDigValid
             ? Images.UiSpriteSet[UISprites.CursorGreen]
             : Images.UiSpriteSet[UISprites.CursorRed];
@@ -143,7 +143,7 @@ public static class RoomDigger {
         }
     }
 
-    public static GameState AdjustBlueprint(PlayerAction playerAction, Map map) {
+    public GameState AdjustBlueprint(PlayerAction playerAction, Map map) {
         const int minSize = 3;
         const int maxSize = 6;
         switch (playerAction) {
@@ -210,7 +210,7 @@ public static class RoomDigger {
         }
     }
 
-    private static void PerformDig(RoomType roomType, Map map, bool digCorridor = true) {
+    private void PerformDig(RoomType roomType, Map map, bool digCorridor = true) {
         Vector2 roomTopLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
         int width = _halfWidth * 2;
         int height = _halfHeight * 2;
@@ -221,7 +221,7 @@ public static class RoomDigger {
         if (digCorridor) {
             List<Vector2> newRoomTiles = newRoom.GetTilePositions();
             List<Vector2> oldRoomTiles = _playerRoom.GetTilePositions();
-            HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
+            HashSet<Vector2> corridorTiles = Map.GetTileRegion(_corridorTopLeft, _corridorBottomRight);
             corridorTiles.ExceptWith(newRoomTiles);
             corridorTiles.ExceptWith(oldRoomTiles);
             
@@ -234,14 +234,14 @@ public static class RoomDigger {
         }
     }
 
-    public static void DigRoom(RoomType roomType, Map map, Vector2 center, int halfWidth, int halfHeight ) {
+    public void DigRoom(RoomType roomType, Map map, Vector2 center, int halfWidth, int halfHeight ) {
         _digCenter = center;
         _halfWidth = halfWidth;
         _halfHeight = halfHeight;
         PerformDig(roomType, map, false);
     }
 
-    private static void ValidateDig(Map map) {
+    private void ValidateDig(Map map) {
         Vector2 roomTopLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
         Vector2 roomBottomRight = _digCenter with { X = _digCenter.X + _halfWidth, Y = _digCenter.Y + _halfHeight };
         if (_digDirection is PlayerAction.DigLeft or PlayerAction.DigRight) {
@@ -265,8 +265,8 @@ public static class RoomDigger {
             return;
         }
         
-        HashSet<Vector2> blueprintTiles = GetTileRegion(roomTopLeft, roomBottomRight);
-        blueprintTiles.UnionWith(GetTileRegion(_corridorTopLeft, _corridorBottomRight));
+        HashSet<Vector2> blueprintTiles = Map.GetTileRegion(roomTopLeft, roomBottomRight);
+        blueprintTiles.UnionWith(Map.GetTileRegion(_corridorTopLeft, _corridorBottomRight));
         blueprintTiles.ExceptWith(_playerRoom.GetTilePositions());
         if (blueprintTiles.Any(tile => !TerrainExtensions.DiggableTerrain.Contains(map.GetTileAt(tile).Terrain))) {
             _isDigValid = false;
@@ -276,21 +276,11 @@ public static class RoomDigger {
         _isDigValid = true;
     }
 
-    private static bool CorridorIsLongEnough(Vector2 newRoomTopLeft, Vector2 newRoomBottomRight) {
-        HashSet<Vector2> roomTiles = GetTileRegion(newRoomTopLeft, newRoomBottomRight);
-        HashSet<Vector2> corridorTiles = GetTileRegion(_corridorTopLeft, _corridorBottomRight);
+    private bool CorridorIsLongEnough(Vector2 newRoomTopLeft, Vector2 newRoomBottomRight) {
+        HashSet<Vector2> roomTiles = Map.GetTileRegion(newRoomTopLeft, newRoomBottomRight);
+        HashSet<Vector2> corridorTiles = Map.GetTileRegion(_corridorTopLeft, _corridorBottomRight);
 
         corridorTiles.ExceptWith(roomTiles);
         return corridorTiles.Count >= 6;
-    }
-
-    public static HashSet<Vector2> GetTileRegion(Vector2 topLeft, Vector2 bottomRight) {
-        HashSet<Vector2> roomTiles = new();
-        for (int y = (int)topLeft.Y; y <= bottomRight.Y; y++) {
-            for (int x = (int)topLeft.X; x <= bottomRight.X; x++) {
-                roomTiles.Add(new Vector2(x, y));
-            }
-        }
-        return roomTiles;
     }
 }

@@ -5,18 +5,18 @@ using MonogameTest.player;
 namespace MonogameTest;
 
 public static class InputHandler {
-    public static GameState HandleInput(GameState gameState, Player player, Map map, DigDialog digDialog) {
+    public static GameState HandleInput(GameState gameState, Player player, Map map, RoomDigger roomDigger, DigDialog digDialog) {
         PlayerAction playerAction = PlayerInput.ReadKeyboard(gameState);
         if (playerAction == PlayerAction.Exit) {
             return OnExit(gameState);
         } 
         
         if (gameState == GameState.Moving) {
-            return OnPlayerMovement(gameState, player, map, playerAction);
+            return OnPlayerMovement(gameState, player, map, playerAction, roomDigger);
         }
         
         if (gameState == GameState.Digging) {
-            return RoomDigger.AdjustBlueprint(playerAction, map);
+            return roomDigger.AdjustBlueprint(playerAction, map);
         }
 
         if (gameState == GameState.InDigDialog) {
@@ -26,11 +26,11 @@ public static class InputHandler {
         return gameState;
     }
 
-    private static GameState OnPlayerMovement(GameState gameState, Player player, Map map, PlayerAction playerAction) {
+    private static GameState OnPlayerMovement(GameState gameState, Player player, Map map, PlayerAction playerAction, RoomDigger roomDigger) {
         player.SendAction(playerAction, map);
         int currentRoomId = map.GetRoomIdForPosition(player.Position);
         if (currentRoomId >= 0) { // if player is not in a corridor
-            if (RoomDigger.IsNewDigValid(gameState, playerAction, player.Position, map, currentRoomId)) {
+            if (roomDigger.IsNewDigValid(gameState, playerAction, player.Position, map, currentRoomId)) {
                 return GameState.InDigDialog;
             }
         }
