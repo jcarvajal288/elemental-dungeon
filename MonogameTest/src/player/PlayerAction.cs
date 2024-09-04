@@ -16,4 +16,5 @@ public enum PlayerAction {
     DecreaseBlueprintWidth,
     DecreaseBlueprintHeight,
     SubmitRoomBlueprint,
+    SubmitDigDialog
 }

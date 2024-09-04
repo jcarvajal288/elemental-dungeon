@@ -24,11 +24,17 @@ public static class PlayerInput {
         GetKeyState();
         if (JustPressed(Keys.Escape)) {
             return PlayerAction.Exit;
-        } else if (gameState == GameState.Moving) {
-            return ReadMovementActions();
-        } else {
-            return ReadDiggingActions();
         }
+
+        if (gameState == GameState.Moving) {
+            return ReadMovementActions();
+        }
+
+        if (gameState == GameState.InDigDialog) {
+            return ReadDigDialogActions();
+        }
+
+        return ReadDiggingActions();
     }
 
     private static PlayerAction ReadMovementActions() {
@@ -65,6 +71,13 @@ public static class PlayerInput {
             return PlayerAction.SubmitRoomBlueprint;
         }
         
+        return PlayerAction.NoAction;
+    }
+
+    private static PlayerAction ReadDigDialogActions() {
+        if (JustPressed(Keys.Enter)) {
+            return PlayerAction.SubmitDigDialog;
+        }
         return PlayerAction.NoAction;
     }
 
