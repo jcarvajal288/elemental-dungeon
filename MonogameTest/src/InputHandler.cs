@@ -20,7 +20,7 @@ public static class InputHandler {
         }
 
         if (gameState == GameState.InDigDialog) {
-            return digDialog.HandleInput(playerAction);
+            return digDialog.HandleInput(playerAction, roomDigger);
         }
 
         return gameState;
@@ -30,7 +30,7 @@ public static class InputHandler {
         player.SendAction(playerAction, map);
         int currentRoomId = map.GetRoomIdForPosition(player.Position);
         if (currentRoomId >= 0) { // if player is not in a corridor
-            if (roomDigger.IsNewDigValid(gameState, playerAction, player.Position, map, currentRoomId)) {
+            if (roomDigger.IsNewDigValid(playerAction, player.Position, map, currentRoomId)) {
                 return GameState.InDigDialog;
             }
         }

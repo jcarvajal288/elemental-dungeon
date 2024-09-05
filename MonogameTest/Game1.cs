@@ -84,7 +84,7 @@ public class Game1 : Game {
         }
         
         if (_gameState == GameState.Digging) {
-            _roomDigger.DrawRoomBlueprint(_spriteBatch);
+            _roomDigger.DrawBlueprint(_spriteBatch);
         }
 
         _spriteBatch.End();
