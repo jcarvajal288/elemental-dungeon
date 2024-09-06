@@ -306,7 +306,7 @@ public class RoomDigger {
     private void ValidateCorridor(Map map) {
         HashSet<Vector2> blueprintTiles = Map.GetTileRegion(_corridorTopLeft, _corridorBottomRight);
         blueprintTiles.ExceptWith(_playerRoom.GetTilePositions());
-        if (blueprintTiles.Any(tile => !TerrainExtensions.WalkableTerrain.Contains(map.GetTileAt(tile).Terrain))) {
+        if (blueprintTiles.Any(tile => TerrainExtensions.WalkableTerrain.Contains(map.GetTileAt(tile).Terrain))) {
             _isDigValid = false;
             return;
         }

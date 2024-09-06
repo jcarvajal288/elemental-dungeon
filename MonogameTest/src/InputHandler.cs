@@ -12,7 +12,7 @@ public static class InputHandler {
         } 
         
         if (gameState == GameState.Moving) {
-            return OnPlayerMovement(gameState, player, map, playerAction, roomDigger);
+            return OnPlayerMovement(player, map, playerAction, roomDigger);
         }
         
         if (gameState == GameState.Digging) {
@@ -26,7 +26,7 @@ public static class InputHandler {
         return gameState;
     }
 
-    private static GameState OnPlayerMovement(GameState gameState, Player player, Map map, PlayerAction playerAction, RoomDigger roomDigger) {
+    private static GameState OnPlayerMovement(Player player, Map map, PlayerAction playerAction, RoomDigger roomDigger) {
         player.SendAction(playerAction, map);
         int currentRoomId = map.GetRoomIdForPosition(player.Position);
         if (currentRoomId >= 0) { // if player is not in a corridor
