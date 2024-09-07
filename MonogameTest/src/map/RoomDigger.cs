@@ -47,11 +47,13 @@ public class RoomDigger {
                 return false;
             }
 
-            // adjust corridor position if player is in the corner of their room
+            // adjust corridor and player position if player is in the corner of their room
             if ((int)digOrigin.Y - (int)_playerRoom.GetTopLeft().Y == 1) {
                 digOrigin = digOrigin with { Y = digOrigin.Y + 1 };
+                _playerPosition = _playerPosition with { Y = _playerPosition.Y + 1 };
             } else if ((int)_playerRoom.GetBottomRight().Y - (int)digOrigin.Y == 1) {
                 digOrigin = digOrigin with { Y = digOrigin.Y - 1 };
+                _playerPosition = _playerPosition with { Y = _playerPosition.Y - 1 };
             }
             
             _digCenter = digOrigin with { X = digOrigin.X - distanceFromPlayer };
@@ -67,11 +69,13 @@ public class RoomDigger {
                 return false;
             }
             
-            // adjust corridor position if player is in the corner of their room
+            // adjust corridor and player position if player is in the corner of their room
             if ((int)digOrigin.Y - (int)_playerRoom.GetTopLeft().Y == 1) {
                 digOrigin = digOrigin with { Y = digOrigin.Y + 1 };
+                _playerPosition = _playerPosition with { Y = _playerPosition.Y + 1 };
             } else if ((int)_playerRoom.GetBottomRight().Y - (int)digOrigin.Y == 1) {
                 digOrigin = digOrigin with { Y = digOrigin.Y - 1 };
+                _playerPosition = _playerPosition with { Y = _playerPosition.Y - 1 };
             }
             
             _digCenter = digOrigin with { X = digOrigin.X + distanceFromPlayer };
@@ -87,11 +91,13 @@ public class RoomDigger {
                 return false;
             }
             
-            // adjust corridor position if player is in the corner of their room
+            // adjust corridor and player position if player is in the corner of their room
             if ((int)digOrigin.X - (int)_playerRoom.GetTopLeft().X == 1) {
                 digOrigin = digOrigin with { X = digOrigin.X + 1 };
+                _playerPosition = _playerPosition with { X = _playerPosition.X + 1 };
             } else if ((int)_playerRoom.GetBottomRight().X - (int)digOrigin.X == 1) {
                 digOrigin = digOrigin with { X = digOrigin.X - 1 };
+                _playerPosition = _playerPosition with { X = _playerPosition.X - 1 };
             }
             
             _digCenter = digOrigin with { Y = digOrigin.Y - distanceFromPlayer };
@@ -107,11 +113,13 @@ public class RoomDigger {
                 return false;
             }
             
-            // adjust corridor position if player is in the corner of their room
+            // adjust corridor and player position if player is in the corner of their room
             if ((int)digOrigin.X - (int)_playerRoom.GetTopLeft().X == 1) {
                 digOrigin = digOrigin with { X = digOrigin.X + 1 };
+                _playerPosition = _playerPosition with { X = _playerPosition.X + 1 };
             } else if ((int)_playerRoom.GetBottomRight().X - (int)digOrigin.X == 1) {
                 digOrigin = digOrigin with { X = digOrigin.X - 1 };
+                _playerPosition = _playerPosition with { X = _playerPosition.X - 1 };
             }
             
             _digCenter = digOrigin with { Y = digOrigin.Y + distanceFromPlayer };
