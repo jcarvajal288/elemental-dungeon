@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MonogameTest.map.rooms;
+namespace MonogameTest.map;
 
 public class Corridor {
     protected Vector2 TopLeft;
@@ -13,7 +14,9 @@ public class Corridor {
     
     protected Dictionary<Vector2, Tile> Grid;
 
-    public Corridor(List<Vector2> tiles, bool isHorizontal) {
+    protected Corridor() { }
+
+    public Corridor(List<Vector2> tiles, Vector2 playerPosition, bool isCorridorHorizontal, bool isDiggingRoom) {
         TopLeft = new Vector2(x: tiles.Min(tile => tile.X), y: tiles.Min(tile => tile.Y));
         BottomRight = new Vector2(x: tiles.Max(tile => tile.X), y: tiles.Max(tile => tile.Y));
         Grid = new Dictionary<Vector2, Tile>();
@@ -22,14 +25,36 @@ public class Corridor {
         foreach (Vector2 pos in positions) {
             Grid[pos] = Tile.CreateTileForTerrain(FloorTerrain);
         }
-             
-        List<Vector2> wallTiles = isHorizontal switch {
-            true => tiles.Where(tile => (int)tile.Y == (int)TopLeft.Y || (int)tile.Y == (int)BottomRight.Y).ToList(),
-            false => tiles.Where(tile => (int)tile.X == (int)TopLeft.X || (int)tile.X == (int)BottomRight.X).ToList(),
-        };
-        foreach (Vector2 pos in wallTiles) {
-            Grid[pos] = Tile.CreateTileForTerrain(WallTerrain);
+
+        List<Vector2> edges = GetEdgePositions();
+
+        if (isDiggingRoom) {
+            List<Vector2> wallTiles = isCorridorHorizontal switch {
+                true => edges.Where(tile => (int)tile.Y == (int)TopLeft.Y || (int)tile.Y == (int)BottomRight.Y)
+                    .ToList(),
+                false => edges.Where(tile => (int)tile.X == (int)TopLeft.X || (int)tile.X == (int)BottomRight.X)
+                    .ToList(),
+            };
+            
+            foreach (Vector2 pos in wallTiles) {
+                Grid[pos] = Tile.CreateTileForTerrain(WallTerrain);
+            }
         }
+        else {
+            List<Vector2> edgesNextToPlayer = edges.Where(tile => {
+                return isCorridorHorizontal switch {
+                    true => Math.Abs((int)tile.Y - playerPosition.Y) <= 1 &&
+                            Math.Abs((int)tile.X - playerPosition.X) <= 2,
+                    false => Math.Abs((int)tile.X - playerPosition.X) <= 1 &&
+                             Math.Abs((int)tile.Y - playerPosition.Y) <= 2,
+                };
+            }).ToList();
+            List<Vector2> wallTiles = edges.Except(edgesNextToPlayer).ToList();
+            foreach (Vector2 pos in wallTiles) {
+                Grid[pos] = Tile.CreateTileForTerrain(WallTerrain);
+            }
+        }
+            
     }
 
     public Vector2 GetTopLeft() {
@@ -39,8 +64,6 @@ public class Corridor {
     public Vector2 GetBottomRight() {
         return BottomRight;
     }
-
-    protected Corridor() { }
 
     public bool ContainsPosition(Vector2 position) {
         return position.X >= TopLeft.X && position.X <= BottomRight.X &&
@@ -59,5 +82,39 @@ public class Corridor {
 
     public List<Vector2> GetFloorTiles() {
         return Grid.Keys.Where(pos => Grid[pos].IsWalkable()).ToList();
+    }
+
+    public List<Vector2> GetEdgePositions() {
+        List<Vector2> wallPositions = GetTilePositions().Where(pos => {
+            return (int)pos.X == (int)TopLeft.X || 
+                   (int)pos.Y == (int)TopLeft.Y ||
+                   (int)pos.X == (int)BottomRight.X ||
+                   (int)pos.Y == (int)BottomRight.Y;
+        }).ToList();
+        return wallPositions;
+    }
+
+    public List<Vector2> GetTilePositions() {
+        return Grid.Keys.ToList();
+    }
+
+    protected static bool OrthogonallyAdjacentToAnyOfTheseTiles(Vector2 pos, List<Vector2> tiles) {
+        return tiles.Exists(tile => 
+            Math.Abs((int)tile.X - (int)pos.X) == 1 && (int)tile.Y == (int)pos.Y || 
+            Math.Abs((int)tile.Y - (int)pos.Y) == 1 && (int)tile.X == (int)pos.X
+        );
+    }
+
+    private static bool OrthogonallyOrDiagonallyAdjacent(Vector2 pos, Vector2 tile) {
+        return  Math.Abs((int)tile.X - (int)pos.X) <= 1 && Math.Abs((int)tile.Y - (int)pos.Y) <= 1 ||
+                Math.Abs((int)tile.Y - (int)pos.Y) <= 1 && Math.Abs((int)tile.X - (int)pos.X) <= 1;
+    }
+
+    public void AddDoorwayForCorridor(List<Vector2> corridorFloorTiles) {
+        List<Vector2> edgePositions = GetEdgePositions();
+        List<Vector2> doorwayPositions = edgePositions.Where(pos => OrthogonallyAdjacentToAnyOfTheseTiles(pos, corridorFloorTiles)).ToList();
+        foreach (Vector2 position in doorwayPositions) {
+            Grid[position] = Tile.CreateTileForTerrain(FloorTerrain);
+        }
     }
 }

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonogameTest.map.rooms;
 
 namespace MonogameTest.map;
 
@@ -11,6 +10,7 @@ public class RoomDigger {
     private Vector2 _digCenter;
     private PlayerAction _digDirection;
     private Room _playerRoom;
+    private Vector2 _playerPosition;
     private int _halfWidth;
     private int _halfHeight;
     private const int CorridorHalfWidth = 2;
@@ -32,6 +32,7 @@ public class RoomDigger {
         _mapWidth = map.GetWidth();
         _mapHeight = map.GetHeight();
         _playerRoom = map.GetRoomForId(playerRoomId);
+        _playerPosition = playerPosition;
         Vector2 digOrigin = playerPosition;
         return playerAction switch {
             PlayerAction.DigLeft => StartDigLeft(),
@@ -233,7 +234,7 @@ public class RoomDigger {
             corridorTiles.ExceptWith(oldRoomTiles);
             
             bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
-            Corridor corridor = new(corridorTiles.ToList(), isCorridorHorizontal);
+            Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, IsDiggingRoom);
             
             newRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
             _playerRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
@@ -254,7 +255,7 @@ public class RoomDigger {
         corridorTiles.ExceptWith(oldRoomTiles);
         
         bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
-        Corridor corridor = new(corridorTiles.ToList(), isCorridorHorizontal);
+        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, IsDiggingRoom);
         
         _playerRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
         map.AddCorridor(corridor);

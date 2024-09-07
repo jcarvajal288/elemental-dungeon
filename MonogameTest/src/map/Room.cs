@@ -30,35 +30,6 @@ public abstract class Room() : Corridor {
         }
     }
 
-    public List<Vector2> GetEdgePositions() {
-        List<Vector2> wallPositions = GetTilePositions().Where(pos => {
-            return (int)pos.X == (int)TopLeft.X || 
-                   (int)pos.Y == (int)TopLeft.Y ||
-                   (int)pos.X == (int)BottomRight.X ||
-                   (int)pos.Y == (int)BottomRight.Y;
-        }).ToList();
-        return wallPositions;
-    }
-
-    public List<Vector2> GetTilePositions() {
-        return Grid.Keys.ToList();
-    }
-
-    public void AddDoorwayForCorridor(List<Vector2> corridorFloorTiles) {
-        List<Vector2> edgePositions = GetEdgePositions();
-        List<Vector2> doorwayPositions = edgePositions.Where(AdjacentToAnyCorridorFloor).ToList();
-        foreach (Vector2 position in doorwayPositions) {
-            Grid[position] = Tile.CreateTileForTerrain(FloorTerrain);
-        }
-
-        bool AdjacentToAnyCorridorFloor(Vector2 pos) {
-            return corridorFloorTiles.Exists(floor => 
-                Math.Abs((int)floor.X - (int)pos.X) == 1 && (int)floor.Y == (int)pos.Y || 
-                Math.Abs((int)floor.Y - (int)pos.Y) == 1 && (int)floor.X == (int)pos.X
-            );
-        }
-    }
-
     public static Room CreateRoom(RoomType roomType, Vector2 topLeft, Vector2 bottomRight) {
         return roomType switch {
             RoomType.EarthElementalFont => new EarthElementalFont(topLeft, bottomRight),
