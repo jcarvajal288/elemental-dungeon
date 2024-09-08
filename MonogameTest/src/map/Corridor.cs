@@ -26,8 +26,6 @@ public class Corridor {
             Grid[pos] = Tile.CreateTileForTerrain(FloorTerrain);
         }
 
-        List<Vector2> edges = GetEdgePositions();
-
         List<Vector2> wallTiles = isDiggingRoom switch {
             true => GetWallTilesForRoomDig(),
             false => GetWallTilesForCorridorDig()
@@ -45,6 +43,7 @@ public class Corridor {
         return;
 
         List<Vector2> GetWallTilesForRoomDig() {
+            List<Vector2> edges = GetEdgePositions();
             return isCorridorHorizontal switch {
                 true => edges.Where(tile => (int)tile.Y == (int)TopLeft.Y || (int)tile.Y == (int)BottomRight.Y)
                     .ToList(),
@@ -54,6 +53,7 @@ public class Corridor {
         }
 
         List<Vector2> GetWallTilesForCorridorDig() {
+            List<Vector2> edges = GetEdgePositions();
             List<Vector2> edgesNextToPlayer = edges.Where(tile => {
                 return isCorridorHorizontal switch {
                     true => Math.Abs((int)tile.Y - playerPosition.Y) <= 1 &&

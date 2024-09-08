@@ -45,14 +45,14 @@ public class Map {
     }
 
     public Tile GetTileAt(Vector2 position) {
-        List<Corridor> containingCorridors = _corridors.Where(corr => corr.ContainsPosition(position)).ToList();
-        if (containingCorridors.Count > 0) {
-            return containingCorridors.First().GetTileAt(position);
-        }
-        
         List<Room> containingRooms = _rooms.Values.Where(room => room.ContainsPosition(position)).ToList();
         if (containingRooms.Count > 0) {
             return containingRooms.First().GetTileAt(position);
+        }
+        
+        List<Corridor> containingCorridors = _corridors.Where(corr => corr.ContainsPosition(position)).ToList();
+        if (containingCorridors.Count > 0) {
+            return containingCorridors.First().GetTileAt(position);
         }
         
         return _grid[(int)position.Y][(int)position.X];
