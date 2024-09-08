@@ -16,13 +16,13 @@ public class Corridor {
 
     protected Corridor() { }
 
-    public Corridor(List<Vector2> tiles, Vector2 playerPosition, bool isCorridorHorizontal, bool isDiggingRoom) {
+    public Corridor(List<Vector2> tiles, Vector2 playerPosition, bool isCorridorHorizontal, bool isDiggingRoom, Map map) {
         TopLeft = new Vector2(x: tiles.Min(tile => tile.X), y: tiles.Min(tile => tile.Y));
         BottomRight = new Vector2(x: tiles.Max(tile => tile.X), y: tiles.Max(tile => tile.Y));
         Grid = new Dictionary<Vector2, Tile>();
-        
+
         HashSet<Vector2> positions = Map.GetTileRegion(TopLeft, BottomRight);
-        foreach (Vector2 pos in positions) {
+        foreach (Vector2 pos in positions.Where(pos => map.GetTileAt(pos).IsDiggable())) {
             Grid[pos] = Tile.CreateTileForTerrain(FloorTerrain);
         }
 
@@ -37,6 +37,11 @@ public class Corridor {
             Grid[pos] = Tile.CreateTileForTerrain(WallTerrain);
         }
 
+        if (!isDiggingRoom) {
+            Room otherRoom = map.GetRoomForId(tiles.Select(map.GetRoomIdForPosition).Distinct().SkipWhile(id => id == -1).First());
+            otherRoom.AddDoorwayForCorridor(GetFloorTiles());
+        }
+        
         return;
 
         List<Vector2> GetWallTilesForRoomDig() {
@@ -57,7 +62,8 @@ public class Corridor {
                              Math.Abs((int)tile.Y - playerPosition.Y) <= 2,
                 };
             }).ToList();
-            return edges.Except(edgesNextToPlayer).ToList();
+            List<Vector2> edgesInOtherRoom = edges.Where(tile => !map.GetTileAt(tile).IsDiggable()).ToList();
+            return edges.Except(edgesNextToPlayer).Except(edgesInOtherRoom).ToList();
         }
     }
 

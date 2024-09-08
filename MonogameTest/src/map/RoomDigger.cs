@@ -242,7 +242,7 @@ public class RoomDigger {
             corridorTiles.ExceptWith(oldRoomTiles);
             
             bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
-            Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, IsDiggingRoom);
+            Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, IsDiggingRoom, map);
             
             newRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
             _playerRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
@@ -263,7 +263,7 @@ public class RoomDigger {
         corridorTiles.ExceptWith(oldRoomTiles);
         
         bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
-        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, IsDiggingRoom);
+        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, IsDiggingRoom, map);
         
         _playerRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
         map.AddCorridor(corridor);

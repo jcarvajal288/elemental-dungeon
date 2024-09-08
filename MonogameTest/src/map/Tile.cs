@@ -19,6 +19,9 @@ public class Tile(Terrain terrain, int spriteIndex) {
         return TerrainExtensions.WalkableTerrain.Contains(terrain);
     }
 
+    public bool IsDiggable() {
+        return TerrainExtensions.DiggableTerrain.Contains(terrain);
+    }
     
     // Tile Builders
     public static Tile CreateTileForTerrain(Terrain terrain) {
@@ -71,4 +74,5 @@ public class Tile(Terrain terrain, int spriteIndex) {
     public static Tile CreateReliefWallTile() {
         return new Tile(Terrain.ReliefWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.ReliefWall].Count));
     }
+
 }
