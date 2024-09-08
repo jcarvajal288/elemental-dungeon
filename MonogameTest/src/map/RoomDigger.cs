@@ -257,7 +257,7 @@ public class RoomDigger {
         DigRoomWithCorridor(roomType, map, false);
     }
 
-    public void DigCorridor(Map map) {
+    private void DigCorridor(Map map) {
         List<Vector2> oldRoomTiles = _playerRoom.GetTilePositions();
         HashSet<Vector2> corridorTiles = Map.GetTileRegion(_corridorTopLeft, _corridorBottomRight);
         corridorTiles.ExceptWith(oldRoomTiles);

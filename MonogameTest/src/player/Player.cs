@@ -1,10 +1,8 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using MonogameTest.map;
 
-namespace MonogameTest;
+namespace MonogameTest.player;
 
 public class Player {
     private Vector2 _position;

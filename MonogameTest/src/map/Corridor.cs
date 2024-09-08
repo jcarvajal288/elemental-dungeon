@@ -108,16 +108,11 @@ public class Corridor {
         return Grid.Keys.ToList();
     }
 
-    protected static bool OrthogonallyAdjacentToAnyOfTheseTiles(Vector2 pos, List<Vector2> tiles) {
+    private static bool OrthogonallyAdjacentToAnyOfTheseTiles(Vector2 pos, List<Vector2> tiles) {
         return tiles.Exists(tile => 
             Math.Abs((int)tile.X - (int)pos.X) == 1 && (int)tile.Y == (int)pos.Y || 
             Math.Abs((int)tile.Y - (int)pos.Y) == 1 && (int)tile.X == (int)pos.X
         );
-    }
-
-    private static bool OrthogonallyOrDiagonallyAdjacent(Vector2 pos, Vector2 tile) {
-        return  Math.Abs((int)tile.X - (int)pos.X) <= 1 && Math.Abs((int)tile.Y - (int)pos.Y) <= 1 ||
-                Math.Abs((int)tile.Y - (int)pos.Y) <= 1 && Math.Abs((int)tile.X - (int)pos.X) <= 1;
     }
 
     public void AddDoorwayForCorridor(List<Vector2> corridorFloorTiles) {
