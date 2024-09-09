@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -308,7 +309,7 @@ public class RoomDigger {
             _isDigValid = false;
             return;
         }
-            
+        
         _isDigValid = true;
     }
 
@@ -319,7 +320,13 @@ public class RoomDigger {
             _isDigValid = false;
             return;
         }
-            
+
+        List<int> roomsInBlueprint = blueprintTiles.Select(map.GetRoomIdForPosition).Distinct().SkipWhile(id => id == -1).ToList();
+        if (roomsInBlueprint.Count > 1) {
+            _isDigValid = false;
+            return;
+        }
+        
         _isDigValid = true;
     }
 
