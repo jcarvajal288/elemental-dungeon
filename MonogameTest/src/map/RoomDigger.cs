@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -208,6 +207,13 @@ public class RoomDigger {
         }
 
         void MoveCenterAndValidate(Vector2 newCenterPosition) {
+            if (newCenterPosition.X < 0 || 
+                newCenterPosition.Y < 0 || 
+                newCenterPosition.X >= map.GetWidth() ||
+                newCenterPosition.Y >= map.GetHeight()) {
+                return;
+            }
+            
             _digCenter = newCenterPosition;
             switch (_digDirection) {
                 case PlayerAction.DigLeft:
