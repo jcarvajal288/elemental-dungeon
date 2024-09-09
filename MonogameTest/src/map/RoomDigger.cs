@@ -317,13 +317,18 @@ public class RoomDigger {
         HashSet<Vector2> blueprintTiles = Map.GetTileRegion(_corridorTopLeft, _corridorBottomRight);
         blueprintTiles.ExceptWith(_playerRoom.GetTilePositions());
         if (blueprintTiles.Any(tile => TerrainExtensions.WalkableTerrain.Contains(map.GetTileAt(tile).Terrain))) {
-            _isDigValid = false;
+            _isDigValid = false; // overlapping room floors
             return;
         }
 
         List<int> roomsInBlueprint = blueprintTiles.Select(map.GetRoomIdForPosition).Distinct().SkipWhile(id => id == -1).ToList();
         if (roomsInBlueprint.Count > 1) {
-            _isDigValid = false;
+            _isDigValid = false; // trying to connect to multiple rooms
+            return;
+        }
+
+        if (blueprintTiles.Count <= 5) {
+            _isDigValid = false; // corridor too short
             return;
         }
         
