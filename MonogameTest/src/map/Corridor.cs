@@ -36,8 +36,11 @@ public class Corridor {
         }
 
         if (!isDiggingRoom) {
-            Room otherRoom = map.GetRoomForId(tiles.Select(map.GetRoomIdForPosition).Distinct().SkipWhile(id => id == -1).First());
-            otherRoom.AddDoorwayForCorridor(GetFloorTiles());
+            List<int> touchedRoomIds = tiles.Select(map.GetRoomIdForPosition).Distinct().SkipWhile(id => id == -1).ToList();
+            if (touchedRoomIds.Count > 0) {
+                Room otherRoom = map.GetRoomForId(touchedRoomIds.First());
+                otherRoom.AddDoorwayForCorridor(GetFloorTiles());
+            }
         }
         
         return;
