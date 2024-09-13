@@ -337,6 +337,11 @@ public class RoomDigger {
             _isDigValid = false; // corridor too short
             return;
         }
+
+        if (blueprintTiles.All(tile => TerrainExtensions.DiggableTerrain.Contains(map.GetTileAt(tile).Terrain))) {
+            _isDigValid = false; // must connect to a room
+            return;
+        }
         
         _isDigValid = true;
     }
