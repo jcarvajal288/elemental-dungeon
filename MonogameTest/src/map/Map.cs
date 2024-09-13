@@ -87,6 +87,22 @@ public class Map {
         return _rooms[playerRoomId];
     }
 
+    public Room GetRoomForPosition(Vector2 position) {
+        return GetRoomForId(GetRoomIdForPosition(position));
+    }
+    
+    public bool IsValidDiggingPosition(Vector2 playerPosition, PlayerAction playerAction) {
+        Room playerRoom = GetRoomForPosition(playerPosition);
+        return playerAction switch {
+            PlayerAction.DigLeft => playerRoom.GetEdgePositions().Contains(playerPosition with { X = playerPosition.X - 1 }),
+            PlayerAction.DigRight => playerRoom.GetEdgePositions().Contains(playerPosition with { X = playerPosition.X + 1 }),
+            PlayerAction.DigUp => playerRoom.GetEdgePositions().Contains(playerPosition with { Y = playerPosition.Y - 1 }),
+            PlayerAction.DigDown => playerRoom.GetEdgePositions().Contains(playerPosition with { Y = playerPosition.Y + 1 }),
+            _ => false
+        };
+    }
+
+
     public static HashSet<Vector2> GetTileRegion(Vector2 topLeft, Vector2 bottomRight) {
         HashSet<Vector2> roomTiles = new();
         for (int y = (int)topLeft.Y; y <= bottomRight.Y; y++) {

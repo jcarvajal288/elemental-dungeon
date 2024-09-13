@@ -18,7 +18,7 @@ public class Game1 : Game {
     private Map _map;
     private Player _player;
     private BitmapFont _font;
-    private RoomDigger _roomDigger;
+    private Excavator _excavator;
     private DigDialog _digDialog;
 
     public Game1() {
@@ -26,14 +26,13 @@ public class Game1 : Game {
         _graphics.PreferredBackBufferWidth = 1280;
         _graphics.PreferredBackBufferHeight = 720;
         _gameState = GameState.Moving;
-        _digDialog = new DigDialog();
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
 
     protected override void Initialize() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        BoxingViewportAdapter viewportAdapter = new BoxingViewportAdapter(Window, GraphicsDevice, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+        BoxingViewportAdapter viewportAdapter = new(Window, GraphicsDevice, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
         _camera = new OrthographicCamera(viewportAdapter);
         base.Initialize();
     }
@@ -41,15 +40,19 @@ public class Game1 : Game {
     protected override void LoadContent() {
         Images.LoadImages(GraphicsDevice);
         _map = new Map(99, 99);
-        _roomDigger = new RoomDigger();
         _player = new Player(new Vector2(50, 50));
         _font = BitmapFont.FromFile(GraphicsDevice, "Content/assets/fonts/00/00.fnt");
-        _roomDigger.DigRoom(RoomType.StartingRoom, _map, new Vector2(50, 50), 3, 3);
+
+        Vector2 startingRoomCenter = new(50, 50);
+        Vector2 roomTopLeft = startingRoomCenter with { X = startingRoomCenter.X - 3, Y = startingRoomCenter.Y - 3 };
+        Vector2 roomBottomRight = startingRoomCenter with { X = startingRoomCenter.X + 3, Y = startingRoomCenter.Y + 3 };
+        _map.AddRoom(Room.CreateRoom(RoomType.StartingRoom, roomTopLeft, roomBottomRight));
+        
         CenterCameraOn(_player.Position);
     }
     
     protected override void Update(GameTime gameTime) {
-        _gameState = InputHandler.HandleInput(_gameState, _player, _map, _roomDigger, _digDialog);
+        _gameState = InputHandler.HandleInput(_gameState, _player, _map, ref _excavator, ref _digDialog);
 
         switch (_gameState) {
             case GameState.Exit:
@@ -59,7 +62,7 @@ public class Game1 : Game {
                 CenterCameraOn(_player.Position);
                 break;
             case GameState.Digging:
-                CenterCameraOn(_roomDigger.DigCenter);
+                CenterCameraOn(_excavator.DigCenter);
                 break;
         }
 
@@ -84,7 +87,7 @@ public class Game1 : Game {
         }
         
         if (_gameState == GameState.Digging) {
-            _roomDigger.DrawBlueprint(_spriteBatch);
+            _excavator.DrawBlueprint(_spriteBatch);
         }
 
         _spriteBatch.End();

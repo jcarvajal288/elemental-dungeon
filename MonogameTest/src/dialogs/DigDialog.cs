@@ -1,17 +1,17 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.BitmapFonts;
-using MonogameTest.map;
 
 namespace MonogameTest.dialogs;
 
-public class DigDialog {
+public class DigDialog(PlayerAction digDirection) {
 
-    private bool _isRoomSelected = true;
+    public readonly PlayerAction DigDirection = digDirection;
+    public bool IsRoomSelected = true;
     
     public void Draw(SpriteBatch spriteBatch, BitmapFont font, Vector2 cameraTopLeft) {
         spriteBatch.DrawString(font, "What will you dig?", cameraTopLeft, Color.White);
-        if (_isRoomSelected) { 
+        if (IsRoomSelected) { 
             spriteBatch.DrawString(font, ">Room", cameraTopLeft with { Y = cameraTopLeft.Y + font.Size }, Color.Yellow);
             spriteBatch.DrawString(font, "  Corridor", cameraTopLeft with { Y = cameraTopLeft.Y + font.Size * 2 }, Color.White);
         } else {
@@ -20,17 +20,17 @@ public class DigDialog {
         }
     }
 
-    public GameState HandleInput(PlayerAction playerAction, RoomDigger roomDigger) {
+    public GameState HandleInput(PlayerAction playerAction) {
         switch (playerAction) {
             case PlayerAction.SubmitDigDialog:
-                roomDigger.IsDiggingRoom = _isRoomSelected;
                 return GameState.Digging;
             case PlayerAction.MoveUp:
             case PlayerAction.MoveDown:
-                _isRoomSelected = !_isRoomSelected;
+                IsRoomSelected = !IsRoomSelected;
                 return GameState.InDigDialog;
             default:
                 return GameState.InDigDialog;
         }
     }
+
 }

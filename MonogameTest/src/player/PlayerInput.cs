@@ -12,7 +12,7 @@ public static class PlayerInput {
         _currentKeyState = Keyboard.GetState();
     }
 
-    private static bool IsPressed(Keys key) {
+    public static bool IsPressed(Keys key) {
         return _currentKeyState.IsKeyDown(key);
     }
 
