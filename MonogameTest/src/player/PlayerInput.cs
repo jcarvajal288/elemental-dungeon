@@ -30,10 +30,6 @@ public static class PlayerInput {
             return ReadMovementActions();
         }
 
-        if (gameState == GameState.InDigDialog) {
-            return ReadDigDialogActions();
-        }
-
         return ReadDiggingActions();
     }
 
@@ -68,23 +64,9 @@ public static class PlayerInput {
             return IsPressed(Keys.LeftShift) ? PlayerAction.DecreaseBlueprintHeight : PlayerAction.MoveDown;
         }
         if (JustPressed(Keys.Enter)) {
-            return PlayerAction.SubmitRoomBlueprint;
+            return PlayerAction.SubmitAction;
         }
         
         return PlayerAction.NoAction;
     }
-
-    private static PlayerAction ReadDigDialogActions() {
-        if (JustPressed(Keys.Enter)) {
-            return PlayerAction.SubmitDigDialog;
-        }
-        if (JustPressed(Keys.Up)) {
-            return PlayerAction.MoveUp;
-        } 
-        if (JustPressed(Keys.Down)) {
-            return PlayerAction.MoveDown;
-        }
-        return PlayerAction.NoAction;
-    }
-
 }

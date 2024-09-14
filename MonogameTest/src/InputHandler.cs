@@ -5,52 +5,30 @@ using MonogameTest.player;
 namespace MonogameTest;
 
 public static class InputHandler {
-    public static GameState HandleInput(GameState gameState, Player player, Map map, ref Excavator excavator, ref DigDialog digDialog) {
+    public static GameState HandleInput(GameState gameState, Player player, Map map, ref Excavator excavator) {
         PlayerAction playerAction = PlayerInput.ReadKeyboard(gameState);
         if (playerAction == PlayerAction.Exit) {
             return OnExit(gameState);
         } 
         
         if (gameState == GameState.Moving) {
-            return OnPlayerMovement(player, map, playerAction, ref digDialog);
+            return HandlePlayerMovement(player, map, playerAction, ref excavator);
         }
         
         if (gameState == GameState.Digging) {
-            return excavator.AdjustBlueprint(playerAction);
-        }
-
-        if (gameState == GameState.InDigDialog) {
-            GameState newGameState = digDialog.HandleInput(playerAction);
-            if (newGameState == GameState.Digging) {
-                excavator = new Excavator(map, player, digDialog.IsRoomSelected);
-                switch (digDialog.DigDirection) {
-                    case PlayerAction.DigLeft:
-                        excavator.StartDigLeft();
-                        break;
-                    case PlayerAction.DigRight:
-                        excavator.StartDigRight();
-                        break;
-                    case PlayerAction.DigUp:
-                        excavator.StartDigUp();
-                        break;
-                    case PlayerAction.DigDown:
-                        excavator.StartDigDown();
-                        break;
-                }
-            }
-            return newGameState;
+            return excavator.HandleInput(playerAction);
         }
 
         return gameState;
     }
 
-    private static GameState OnPlayerMovement(Player player, Map map, PlayerAction playerAction, ref DigDialog digDialog) {
+    private static GameState HandlePlayerMovement(Player player, Map map, PlayerAction playerAction, ref Excavator excavator) {
         player.SendAction(playerAction, map);
         int currentRoomId = map.GetRoomIdForPosition(player.Position);
         if (currentRoomId >= 0 && AttemptingDig(playerAction)) { // if player is not in a corridor
             if (map.IsValidDiggingPosition(player.Position, playerAction)) {
-                digDialog = new DigDialog(playerAction);
-                return GameState.InDigDialog;
+                excavator = new Excavator(map, player, playerAction);
+                return GameState.Digging;
             }
         }
         return GameState.Moving;

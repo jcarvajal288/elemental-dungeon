@@ -1,12 +1,12 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.BitmapFonts;
 
 namespace MonogameTest.dialogs;
 
-public class DigDialog(PlayerAction digDirection) {
+public class RoomOrCorridorDialog {
 
-    public readonly PlayerAction DigDirection = digDirection;
     public bool IsRoomSelected = true;
     
     public void Draw(SpriteBatch spriteBatch, BitmapFont font, Vector2 cameraTopLeft) {
@@ -20,16 +20,16 @@ public class DigDialog(PlayerAction digDirection) {
         }
     }
 
-    public GameState HandleInput(PlayerAction playerAction) {
+    public bool HasSelectedRoomOrCorridor(PlayerAction playerAction) {
         switch (playerAction) {
-            case PlayerAction.SubmitDigDialog:
-                return GameState.Digging;
+            case PlayerAction.SubmitAction:
+                return true;
             case PlayerAction.MoveUp:
             case PlayerAction.MoveDown:
                 IsRoomSelected = !IsRoomSelected;
-                return GameState.InDigDialog;
+                return false;
             default:
-                return GameState.InDigDialog;
+                return false;
         }
     }
 

@@ -3,14 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.ViewportAdapters;
-using MonogameTest.dialogs;
 using MonogameTest.map;
 using MonogameTest.player;
 
 namespace MonogameTest;
 
 public class Game1 : Game {
-    private GraphicsDeviceManager _graphics;
+    private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private OrthographicCamera _camera;
 
@@ -19,7 +18,6 @@ public class Game1 : Game {
     private Player _player;
     private BitmapFont _font;
     private Excavator _excavator;
-    private DigDialog _digDialog;
 
     public Game1() {
         _graphics = new GraphicsDeviceManager(this);
@@ -52,7 +50,7 @@ public class Game1 : Game {
     }
     
     protected override void Update(GameTime gameTime) {
-        _gameState = InputHandler.HandleInput(_gameState, _player, _map, ref _excavator, ref _digDialog);
+        _gameState = InputHandler.HandleInput(_gameState, _player, _map, ref _excavator);
 
         switch (_gameState) {
             case GameState.Exit:
@@ -82,12 +80,8 @@ public class Game1 : Game {
         _map.Draw(_spriteBatch);
         _player.Draw(_spriteBatch);
         
-        if (_gameState == GameState.InDigDialog) {
-            _digDialog.Draw(_spriteBatch, _font, _camera.Position);
-        }
-        
         if (_gameState == GameState.Digging) {
-            _excavator.DrawBlueprint(_spriteBatch);
+            _excavator.Draw(_spriteBatch, _camera.Position, _font);
         }
 
         _spriteBatch.End();

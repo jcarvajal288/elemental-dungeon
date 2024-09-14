@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.BitmapFonts;
+using MonogameTest.dialogs;
 using MonogameTest.player;
 
 namespace MonogameTest.map;
 
-public class Excavator(Map map, Player player, bool isDiggingRoom) {
+public class Excavator() {
+
+    private enum State {
+        SelectingRoomOrCorridor,
+        AdjustingBlueprint,
+        SelectingRoomType,
+    }
+
+    private State _state = State.SelectingRoomOrCorridor;
+    private Map _map;
 
     private Vector2 _digCenter;
     private PlayerAction _digDirection;
-    private readonly Room _playerRoom = map.GetRoomForId(map.GetRoomIdForPosition(player.Position));
-    private Vector2 _playerPosition = player.Position;
+    private readonly Room _playerRoom;
+    private Vector2 _playerPosition;
     private int _halfWidth = 3;
     private int _halfHeight = 3;
     private const int CorridorHalfWidth = 2;
@@ -21,10 +32,37 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
     private Vector2 _corridorBottomRight;
     
     private bool _isDigValid;
+    private bool _isDiggingRoom;
+    
+    private readonly RoomOrCorridorDialog _roomOrCorridorDialog;
 
     public Vector2 DigCenter => _digCenter;
 
-    public void StartDigLeft() {
+    public Excavator(Map map, Player player, PlayerAction digDirection) : this() {
+        _digDirection = digDirection;
+        _playerRoom = map.GetRoomForId(map.GetRoomIdForPosition(player.Position));
+        _playerPosition = player.Position;
+        _roomOrCorridorDialog = new RoomOrCorridorDialog();
+        _map = map;
+        switch (_digDirection) {
+            case PlayerAction.DigLeft:
+                StartDigLeft();
+                break;
+            case PlayerAction.DigRight:
+                StartDigRight();
+                break;
+            case PlayerAction.DigUp:
+                StartDigUp();
+                break;
+            case PlayerAction.DigDown:
+                StartDigDown();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void StartDigLeft() {
         Vector2 digOrigin = _playerPosition;
         const int distanceFromPlayer = 6;
         
@@ -41,10 +79,9 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
         _corridorTopLeft = _digCenter with { Y = _digCenter.Y - CorridorHalfWidth };
         _corridorBottomRight = digOrigin with { X = digOrigin.X - 1, Y = digOrigin.Y + CorridorHalfWidth };
         _digDirection = PlayerAction.DigLeft;
-        ValidateBlueprint();
     }
 
-    public void StartDigRight() {
+    private void StartDigRight() {
         Vector2 digOrigin = _playerPosition;
         const int distanceFromPlayer = 6;
         
@@ -61,10 +98,9 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
         _corridorTopLeft = digOrigin with { X = digOrigin.X + 1, Y = digOrigin.Y - CorridorHalfWidth };
         _corridorBottomRight = _digCenter with { Y = _digCenter.Y + CorridorHalfWidth };
         _digDirection = PlayerAction.DigRight;
-        ValidateBlueprint();
     }
 
-    public void StartDigUp() {
+    private void StartDigUp() {
         Vector2 digOrigin = _playerPosition;
         const int distanceFromPlayer = 6;
         
@@ -81,10 +117,9 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
         _corridorTopLeft = _digCenter with { X = _digCenter.X - CorridorHalfWidth };
         _corridorBottomRight = digOrigin with { X = digOrigin.X + CorridorHalfWidth, Y = digOrigin.Y - 1 };
         _digDirection = PlayerAction.DigUp;
-        ValidateBlueprint();
     }
 
-    public void StartDigDown() {
+    private void StartDigDown() {
         Vector2 digOrigin = _playerPosition;
         const int distanceFromPlayer = 6;
         
@@ -101,17 +136,43 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
         _corridorTopLeft = digOrigin with { X = digOrigin.X - CorridorHalfWidth, Y = digOrigin.Y + 1 };
         _corridorBottomRight = _digCenter with { X = _digCenter.X + CorridorHalfWidth };
         _digDirection = PlayerAction.DigDown;
-        ValidateBlueprint();
+    }
+    
+    public GameState HandleInput(PlayerAction playerAction) {
+        if (_state == State.SelectingRoomOrCorridor && _roomOrCorridorDialog.HasSelectedRoomOrCorridor(playerAction)) {
+            _isDiggingRoom = _roomOrCorridorDialog.IsRoomSelected;
+            _state = State.AdjustingBlueprint;
+            ValidateBlueprint();
+        } else if (_state == State.AdjustingBlueprint) {
+            _state = AdjustBlueprint(playerAction);
+        } else if (_state == State.SelectingRoomType) {
+            if (_isDiggingRoom) {
+                DigRoomWithCorridor(RoomType.EarthElementalFont);
+            } else {
+                DigCorridor();
+            }
+            return GameState.Moving;
+        }
+
+        return GameState.Digging;
     }
 
-    public void DrawBlueprint(SpriteBatch spriteBatch) {
+    public void Draw(SpriteBatch spriteBatch, Vector2 cameraTopLeft, BitmapFont font) {
+        if (_state == State.SelectingRoomOrCorridor) {
+            _roomOrCorridorDialog.Draw(spriteBatch, font, cameraTopLeft);
+        } else if (_state == State.AdjustingBlueprint) {
+            DrawBlueprint(spriteBatch);
+        } 
+    }
+
+    private void DrawBlueprint(SpriteBatch spriteBatch) {
         Texture2D cursorSprite = _isDigValid
             ? Images.UiSpriteSet[UISprites.CursorGreen]
             : Images.UiSpriteSet[UISprites.CursorRed];
         Vector2 topLeft = _digCenter with { X = _digCenter.X - _halfWidth, Y = _digCenter.Y - _halfHeight };
         int width = _halfWidth * 2 + 1;
         int height = _halfHeight * 2 + 1;
-        if (isDiggingRoom) {
+        if (_isDiggingRoom) {
             for (int y = (int)topLeft.Y; y < topLeft.Y + height; y++) {
                 for (int x = (int)topLeft.X; x < topLeft.X + width; x++) {
                     Vector2 pixelPosition = new(x * Tile.Size, y * Tile.Size);
@@ -128,7 +189,7 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
         }
     }
 
-    public GameState AdjustBlueprint(PlayerAction playerAction) {
+    private State AdjustBlueprint(PlayerAction playerAction) {
         const int minSize = 3;
         const int maxSize = 6;
         switch (playerAction) {
@@ -137,53 +198,48 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
                     _halfWidth -= 1;
                 }
                 ValidateBlueprint();
-                return GameState.Digging;
+                return State.AdjustingBlueprint;
             case PlayerAction.IncreaseBlueprintWidth:
                 if (_halfWidth < maxSize) {
                     _halfWidth += 1;
                 }
                 ValidateBlueprint();
-                return GameState.Digging;
+                return State.AdjustingBlueprint;
             case PlayerAction.IncreaseBlueprintHeight:
                 if (_halfHeight < maxSize) {
                     _halfHeight += 1;
                 }
                 ValidateBlueprint();
-                return GameState.Digging;
+                return State.AdjustingBlueprint;
             case PlayerAction.DecreaseBlueprintHeight:
                 if (_halfHeight > minSize) {
                     _halfHeight -= 1;
                 }
                 ValidateBlueprint();
-                return GameState.Digging;
+                return State.AdjustingBlueprint;
             case PlayerAction.MoveLeft:
                 MoveCenterAndValidate(_digCenter with { X = _digCenter.X - 1 });
-                return GameState.Digging;
+                return State.AdjustingBlueprint;
             case PlayerAction.MoveRight:
                 MoveCenterAndValidate(_digCenter with { X = _digCenter.X + 1 });
-                return GameState.Digging;
+                return State.AdjustingBlueprint;
             case PlayerAction.MoveUp:
                 MoveCenterAndValidate(_digCenter with { Y = _digCenter.Y - 1 });
-                return GameState.Digging;
+                return State.AdjustingBlueprint;
             case PlayerAction.MoveDown:
                 MoveCenterAndValidate(_digCenter with { Y = _digCenter.Y + 1 });
-                return GameState.Digging;
-            case PlayerAction.SubmitRoomBlueprint when _isDigValid:
-                if (isDiggingRoom) {
-                    DigRoomWithCorridor(RoomType.EarthElementalFont);
-                } else {
-                    DigCorridor();
-                }
-                return GameState.Moving;
+                return State.AdjustingBlueprint;
+            case PlayerAction.SubmitAction when _isDigValid:
+                return State.SelectingRoomType;
             default:
-                return GameState.Digging;
+                return State.AdjustingBlueprint;
         }
 
         void MoveCenterAndValidate(Vector2 newCenterPosition) {
             if (newCenterPosition.X < 0 || 
                 newCenterPosition.Y < 0 || 
-                newCenterPosition.X >= map.GetWidth() ||
-                newCenterPosition.Y >= map.GetHeight()) {
+                newCenterPosition.X >= _map.GetWidth() ||
+                newCenterPosition.Y >= _map.GetHeight()) {
                 return;
             }
             
@@ -212,7 +268,7 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
         int height = _halfHeight * 2;
         Vector2 roomBottomRight = roomTopLeft with { X = roomTopLeft.X + width, Y = roomTopLeft.Y + height };
         Room newRoom = Room.CreateRoom(roomType, roomTopLeft, roomBottomRight);
-        map.AddRoom(newRoom);
+        _map.AddRoom(newRoom);
         
         List<Vector2> newRoomTiles = newRoom.GetTilePositions();
         List<Vector2> oldRoomTiles = _playerRoom.GetTilePositions();
@@ -221,11 +277,11 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
         corridorTiles.ExceptWith(oldRoomTiles);
         
         bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
-        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, isDiggingRoom, map);
+        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, _isDiggingRoom, _map);
         
         newRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
         _playerRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
-        map.AddCorridor(corridor);
+        _map.AddCorridor(corridor);
     }
 
     private void DigCorridor() {
@@ -234,14 +290,14 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
         corridorTiles.ExceptWith(oldRoomTiles);
         
         bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
-        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, isDiggingRoom, map);
+        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, _isDiggingRoom, _map);
         
         _playerRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
-        map.AddCorridor(corridor);
+        _map.AddCorridor(corridor);
     }
 
     private void ValidateBlueprint() {
-        if (isDiggingRoom) {
+        if (_isDiggingRoom) {
             ValidateRoom();
         } else {
             ValidateCorridor();
@@ -267,7 +323,7 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
             return;
         }
 
-        if (roomTopLeft.X < 1 || roomTopLeft.Y < 1 || roomBottomRight.X >= map.GetWidth()-1 || roomBottomRight.Y >= map.GetHeight()-1) {
+        if (roomTopLeft.X < 1 || roomTopLeft.Y < 1 || roomBottomRight.X >= _map.GetWidth()-1 || roomBottomRight.Y >= _map.GetHeight()-1) {
             _isDigValid = false;
             return;
         }
@@ -275,7 +331,7 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
         HashSet<Vector2> blueprintTiles = Map.GetTileRegion(roomTopLeft, roomBottomRight);
         blueprintTiles.UnionWith(Map.GetTileRegion(_corridorTopLeft, _corridorBottomRight));
         blueprintTiles.ExceptWith(_playerRoom.GetTilePositions());
-        if (blueprintTiles.Any(tile => !TerrainExtensions.DiggableTerrain.Contains(map.GetTileAt(tile).Terrain))) {
+        if (blueprintTiles.Any(tile => !TerrainExtensions.DiggableTerrain.Contains(_map.GetTileAt(tile).Terrain))) {
             _isDigValid = false;
             return;
         }
@@ -286,12 +342,12 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
     private void ValidateCorridor() {
         HashSet<Vector2> blueprintTiles = Map.GetTileRegion(_corridorTopLeft, _corridorBottomRight);
         blueprintTiles.ExceptWith(_playerRoom.GetTilePositions());
-        if (blueprintTiles.Any(tile => TerrainExtensions.WalkableTerrain.Contains(map.GetTileAt(tile).Terrain))) {
+        if (blueprintTiles.Any(tile => TerrainExtensions.WalkableTerrain.Contains(_map.GetTileAt(tile).Terrain))) {
             _isDigValid = false; // overlapping room floors
             return;
         }
 
-        List<int> roomsInBlueprint = blueprintTiles.Select(map.GetRoomIdForPosition).Distinct().Where(id => id == -1).ToList();
+        List<int> roomsInBlueprint = blueprintTiles.Select(_map.GetRoomIdForPosition).Distinct().Where(id => id == -1).ToList();
         if (roomsInBlueprint.Count > 1) {
             roomsInBlueprint.ForEach(id => Console.Out.WriteLine($"{id}"));
             _isDigValid = false; // trying to connect to multiple rooms
@@ -303,7 +359,7 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
             return;
         }
 
-        if (blueprintTiles.All(tile => TerrainExtensions.DiggableTerrain.Contains(map.GetTileAt(tile).Terrain))) {
+        if (blueprintTiles.All(tile => TerrainExtensions.DiggableTerrain.Contains(_map.GetTileAt(tile).Terrain))) {
             _isDigValid = false; // must connect to a room
             return;
         }
@@ -318,4 +374,5 @@ public class Excavator(Map map, Player player, bool isDiggingRoom) {
         corridorTiles.ExceptWith(roomTiles);
         return corridorTiles.Count >= 6;
     }
+
 }
