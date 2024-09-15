@@ -35,6 +35,7 @@ public class Excavator() {
     private bool _isDiggingRoom;
     
     private readonly RoomOrCorridorDialog _roomOrCorridorDialog;
+    private readonly RoomSelectionDialog _roomSelectionDialog;
 
     public Vector2 DigCenter => _digCenter;
 
@@ -43,6 +44,7 @@ public class Excavator() {
         _playerRoom = map.GetRoomForId(map.GetRoomIdForPosition(player.Position));
         _playerPosition = player.Position;
         _roomOrCorridorDialog = new RoomOrCorridorDialog();
+        _roomSelectionDialog = new RoomSelectionDialog();
         _map = map;
         switch (_digDirection) {
             case PlayerAction.DigLeft:
@@ -145,24 +147,34 @@ public class Excavator() {
             ValidateBlueprint();
         } else if (_state == State.AdjustingBlueprint) {
             _state = AdjustBlueprint(playerAction);
-        } else if (_state == State.SelectingRoomType) {
-            if (_isDiggingRoom) {
-                DigRoomWithCorridor(RoomType.EarthElementalFont);
-            } else {
-                DigCorridor();
-            }
+        } else if (_state == State.SelectingRoomType && _roomSelectionDialog.HasSelectedRoomType(playerAction)) {
+            DoDig();
             return GameState.Moving;
         }
 
         return GameState.Digging;
     }
 
+    private void DoDig() {
+        if (_isDiggingRoom) {
+            DigRoomWithCorridor(_roomSelectionDialog.SelectedRoomType);
+        } else {
+            DigCorridor();
+        }
+    }
+
     public void Draw(SpriteBatch spriteBatch, Vector2 cameraTopLeft, BitmapFont font) {
-        if (_state == State.SelectingRoomOrCorridor) {
-            _roomOrCorridorDialog.Draw(spriteBatch, font, cameraTopLeft);
-        } else if (_state == State.AdjustingBlueprint) {
-            DrawBlueprint(spriteBatch);
-        } 
+        switch (_state) {
+            case State.SelectingRoomOrCorridor:
+                _roomOrCorridorDialog.Draw(spriteBatch, font, cameraTopLeft);
+                break;
+            case State.AdjustingBlueprint:
+                DrawBlueprint(spriteBatch);
+                break;
+            case State.SelectingRoomType:
+                _roomSelectionDialog.Draw(spriteBatch, font, cameraTopLeft);
+                break;
+        }
     }
 
     private void DrawBlueprint(SpriteBatch spriteBatch) {

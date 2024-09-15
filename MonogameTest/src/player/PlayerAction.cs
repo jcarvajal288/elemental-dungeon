@@ -1,4 +1,4 @@
-namespace MonogameTest;
+namespace MonogameTest.player;
 
 public enum PlayerAction {
     NoAction,
