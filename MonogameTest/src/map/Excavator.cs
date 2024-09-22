@@ -147,7 +147,7 @@ public class Excavator() {
             ValidateBlueprint();
         } else if (_state == State.AdjustingBlueprint) {
             _state = AdjustBlueprint(playerAction);
-        } else if (_state == State.SelectingRoomType && _roomSelectionDialog.HasSelectedRoomType(playerAction)) {
+        } else if (_state == State.SelectingRoomType && (!_isDiggingRoom || _roomSelectionDialog.HasSelectedRoomType(playerAction))) {
             DoDig();
             return GameState.Moving;
         }
@@ -279,7 +279,7 @@ public class Excavator() {
         int width = _halfWidth * 2;
         int height = _halfHeight * 2;
         Vector2 roomBottomRight = roomTopLeft with { X = roomTopLeft.X + width, Y = roomTopLeft.Y + height };
-        Room newRoom = Room.CreateRoom(roomType, roomTopLeft, roomBottomRight);
+        Room newRoom = Room.CreateRoom(roomType, roomTopLeft, roomBottomRight, _map.NextRoomId());
         _map.AddRoom(newRoom);
         
         List<Vector2> newRoomTiles = newRoom.GetTilePositions();
@@ -289,7 +289,8 @@ public class Excavator() {
         corridorTiles.ExceptWith(oldRoomTiles);
         
         bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
-        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, _isDiggingRoom, _map);
+        Tuple<int, int> connectedRoomIds = new(_playerRoom.GetId(), newRoom.GetId());
+        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, _isDiggingRoom, _map, connectedRoomIds);
         
         newRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
         _playerRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
@@ -300,9 +301,11 @@ public class Excavator() {
         List<Vector2> oldRoomTiles = _playerRoom.GetTilePositions();
         HashSet<Vector2> corridorTiles = Map.GetTileRegion(_corridorTopLeft, _corridorBottomRight);
         corridorTiles.ExceptWith(oldRoomTiles);
-        
+
+        int otherRoomId = corridorTiles.Select(_map.GetRoomIdForPosition).Distinct().First(id => id != -1);
         bool isCorridorHorizontal = _digDirection is PlayerAction.DigLeft or PlayerAction.DigRight;
-        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, _isDiggingRoom, _map);
+        Tuple<int, int> connectedRoomIds = new(_playerRoom.GetId(), otherRoomId);
+        Corridor corridor = new(corridorTiles.ToList(), _playerPosition, isCorridorHorizontal, _isDiggingRoom, _map, connectedRoomIds);
         
         _playerRoom.AddDoorwayForCorridor(corridor.GetFloorTiles());
         _map.AddCorridor(corridor);
@@ -359,7 +362,7 @@ public class Excavator() {
             return;
         }
 
-        List<int> roomsInBlueprint = blueprintTiles.Select(_map.GetRoomIdForPosition).Distinct().Where(id => id == -1).ToList();
+        List<int> roomsInBlueprint = blueprintTiles.Select(_map.GetRoomIdForPosition).Distinct().Where(id => id != -1).ToList();
         if (roomsInBlueprint.Count > 1) {
             roomsInBlueprint.ForEach(id => Console.Out.WriteLine($"{id}"));
             _isDigValid = false; // trying to connect to multiple rooms

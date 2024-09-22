@@ -6,12 +6,14 @@ using MonogameTest.map.rooms;
 namespace MonogameTest.map;
 
 public abstract class Room() : Corridor {
-    protected Room(Vector2 topLeft, Vector2 bottomRight, Terrain floorTerrain = Terrain.OrcFloor, Terrain wallTerrain = Terrain.OrcWall) : this() {
+    
+    protected Room(Vector2 topLeft, Vector2 bottomRight, int id, Terrain floorTerrain = Terrain.OrcFloor, Terrain wallTerrain = Terrain.OrcWall) : this() {
         TopLeft = topLeft;
         BottomRight = bottomRight;
         FloorTerrain = floorTerrain;
         WallTerrain = wallTerrain;
         Grid = new Dictionary<Vector2, Tile>();
+        Id = id;
         BuildWallsAndFloor();
         // ReSharper disable once VirtualMemberCallInConstructor
         FillRoom();
@@ -29,10 +31,10 @@ public abstract class Room() : Corridor {
         }
     }
 
-    public static Room CreateRoom(RoomType roomType, Vector2 topLeft, Vector2 bottomRight) {
+    public static Room CreateRoom(RoomType roomType, Vector2 topLeft, Vector2 bottomRight, int id) {
         return roomType switch {
-            RoomType.EarthElementalFont => new EarthElementalFont(topLeft, bottomRight),
-            RoomType.StartingRoom => new StartingRoom(topLeft, bottomRight),
+            RoomType.EarthElementalFont => new EarthElementalFont(topLeft, bottomRight, id),
+            RoomType.StartingRoom => new StartingRoom(topLeft, bottomRight, id),
             _ => throw new ArgumentOutOfRangeException(nameof(roomType), roomType, null)
         };
     }

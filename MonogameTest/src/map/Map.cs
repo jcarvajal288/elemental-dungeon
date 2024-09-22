@@ -67,8 +67,7 @@ public class Map {
     }
 
     public void AddRoom(Room room) {
-        int id = _rooms.Count;
-        _rooms.Add(id, room);
+        _rooms.Add(room.GetId(), room);
     }
 
     public void AddCorridor(Corridor corridor) {
@@ -91,6 +90,10 @@ public class Map {
     public Room GetRoomForPosition(Vector2 position) {
         return GetRoomForId(GetRoomIdForPosition(position));
     }
+
+    public Corridor GetCorridorForPosition(Vector2 position) {
+        return _corridors.FirstOrDefault(corridor => corridor.ContainsPosition(position));
+    }
     
     public bool IsValidDiggingPosition(Vector2 playerPosition, PlayerAction playerAction) {
         Room playerRoom = GetRoomForPosition(playerPosition);
@@ -112,5 +115,9 @@ public class Map {
             }
         }
         return roomTiles;
+    }
+
+    public int NextRoomId() {
+        return _rooms.Count;
     }
 }

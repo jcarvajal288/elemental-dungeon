@@ -1,17 +1,14 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonogameTest.map;
 
 namespace MonogameTest.player;
 
-public class Player {
-    private Vector2 _position;
+public class Player(Vector2 position) {
+    private Vector2 _position = position;
 
     public Vector2 Position => _position;
-
-    public Player(Vector2 position) {
-        _position = position;            
-    }
 
     public void Draw(SpriteBatch spriteBatch) {
         Vector2 pixelPosition = new(_position.X * Tile.Size, _position.Y * Tile.Size);
@@ -21,6 +18,12 @@ public class Player {
 
     private void TryMove(Vector2 newPosition, Map map) {
         if (map.GetTileAt(newPosition).IsWalkable()) {
+            int roomId = map.GetRoomIdForPosition(newPosition);
+            if (roomId == -1) {
+                Console.Out.WriteLine(map.GetCorridorForPosition(newPosition).GetConnectedRoomIds());
+            } else {
+                Console.Out.WriteLine(roomId);
+            }
             _position = newPosition;
         }
     }

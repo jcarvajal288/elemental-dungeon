@@ -14,12 +14,18 @@ public class Corridor {
     
     protected Dictionary<Vector2, Tile> Grid;
 
+    protected int Id;
+
+    private Tuple<int, int> _connectedRoomIds;
+
     protected Corridor() { }
 
-    public Corridor(List<Vector2> tiles, Vector2 playerPosition, bool isCorridorHorizontal, bool isDiggingRoom, Map map) {
+    public Corridor(List<Vector2> tiles, Vector2 playerPosition, bool isCorridorHorizontal, bool isDiggingRoom, Map map, Tuple<int, int> connectedRoomIds) {
         TopLeft = new Vector2(x: tiles.Min(tile => tile.X), y: tiles.Min(tile => tile.Y));
         BottomRight = new Vector2(x: tiles.Max(tile => tile.X), y: tiles.Max(tile => tile.Y));
         Grid = new Dictionary<Vector2, Tile>();
+        Id = -1;
+        _connectedRoomIds = connectedRoomIds;
 
         HashSet<Vector2> positions = Map.GetTileRegion(TopLeft, BottomRight);
         foreach (Vector2 pos in positions.Where(pos => map.GetTileAt(pos).IsDiggable())) {
@@ -70,12 +76,20 @@ public class Corridor {
         }
     }
 
+    public Tuple<int, int> GetConnectedRoomIds() {
+        return _connectedRoomIds;
+    }
+
     public Vector2 GetTopLeft() {
         return TopLeft;
     }
 
     public Vector2 GetBottomRight() {
         return BottomRight;
+    }
+
+    public int GetId() {
+        return Id;
     }
 
     public bool ContainsPosition(Vector2 position) {

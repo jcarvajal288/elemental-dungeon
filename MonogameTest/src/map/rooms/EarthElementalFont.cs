@@ -4,10 +4,12 @@ namespace MonogameTest.map.rooms;
 
 public class EarthElementalFont(
     Vector2 topLeft, 
-    Vector2 bottomRight
+    Vector2 bottomRight,
+    int id
 ) : Room(
     topLeft, 
     bottomRight, 
+    id,
     Terrain.LimestoneFloor, 
     Terrain.BrownBrickWall
 ) {

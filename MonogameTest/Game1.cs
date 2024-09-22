@@ -44,7 +44,7 @@ public class Game1 : Game {
         Vector2 startingRoomCenter = new(50, 50);
         Vector2 roomTopLeft = startingRoomCenter with { X = startingRoomCenter.X - 3, Y = startingRoomCenter.Y - 3 };
         Vector2 roomBottomRight = startingRoomCenter with { X = startingRoomCenter.X + 3, Y = startingRoomCenter.Y + 3 };
-        _map.AddRoom(Room.CreateRoom(RoomType.StartingRoom, roomTopLeft, roomBottomRight));
+        _map.AddRoom(Room.CreateRoom(RoomType.StartingRoom, roomTopLeft, roomBottomRight, _map.NextRoomId()));
         
         CenterCameraOn(_player.Position);
     }
