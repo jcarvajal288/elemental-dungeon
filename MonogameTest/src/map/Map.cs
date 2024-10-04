@@ -11,6 +11,7 @@ public class Map {
     private readonly List<List<Tile>> _grid;
     private readonly Dictionary<int, Room> _rooms;
     private readonly List<Corridor> _corridors;
+    private int[,] _roomConnectionMatrix;
 
     public Map(int width, int height) {
         Random rng = new();
@@ -72,6 +73,14 @@ public class Map {
 
     public void AddCorridor(Corridor corridor) {
         _corridors.Add(corridor);
+        CalculateRoomConnectionMatrix();
+        for (int i = 0; i < _roomConnectionMatrix.GetLength(0); i++) {
+            for (int j = 0; j < _roomConnectionMatrix.GetLength(1); j++) {
+                Console.Out.Write(_roomConnectionMatrix[i, j]);
+                Console.Out.Write(',');
+            }
+            Console.Out.Write('\n');
+        }
     }
 
     public int GetRoomIdForPosition(Vector2 position) {
@@ -119,5 +128,56 @@ public class Map {
 
     public int NextRoomId() {
         return _rooms.Count;
+    }
+
+    private void CalculateRoomConnectionMatrix() {
+        bool[,] adjacencyMatrix = new bool[_rooms.Count, _rooms.Count];
+        for (int i = 0; i < adjacencyMatrix.GetLength(0); i++) {
+            for (int j = 0; j < adjacencyMatrix.GetLength(1); j++) {
+                adjacencyMatrix[i, j] = false;
+            }
+        }
+        
+        _corridors.ForEach(corridor => {
+            Tuple<int, int> ids = corridor.GetConnectedRoomIds();
+            adjacencyMatrix[ids.Item1, ids.Item2] = true;
+            adjacencyMatrix[ids.Item2, ids.Item1] = true;
+        });
+        
+        _roomConnectionMatrix = new int[_rooms.Count, _rooms.Count];
+        for (int roomId = 0; roomId < _roomConnectionMatrix.GetLength(0); roomId++) {
+            FindShortestPathsForRoomId(roomId, adjacencyMatrix);
+        }
+    }
+
+    private void FindShortestPathsForRoomId(int roomId, bool[,] adjacencyMatrix) {
+        int[] distances = new int[_roomConnectionMatrix.GetLength(0)];
+        Array.Fill(distances, int.MaxValue);
+        distances[roomId] = 0;
+        
+        bool[] visited = new bool[_roomConnectionMatrix.GetLength(0)];
+        Array.Fill(visited, false);
+        visited[roomId] = true;
+        
+        Queue<int> queue = new();        
+        queue.Enqueue(roomId);
+
+        int distance = 0;
+        while (queue.Count > 0) { // Breadth First Search
+            distance++;
+            int v = queue.Dequeue();
+
+            for (int i = 0; i < adjacencyMatrix.GetLength(0); i++) {
+                if (adjacencyMatrix[v, i] && !visited[i]) {
+                    visited[i] = true;
+                    distances[i] = distance;
+                    queue.Enqueue(i);
+                }
+            }
+        }
+
+        for (int i = 0; i < distances.GetLength(0); i++) {
+            _roomConnectionMatrix[roomId, i] = distances[i];
+        }
     }
 }

@@ -364,7 +364,6 @@ public class Excavator() {
 
         List<int> roomsInBlueprint = blueprintTiles.Select(_map.GetRoomIdForPosition).Distinct().Where(id => id != -1).ToList();
         if (roomsInBlueprint.Count > 1) {
-            roomsInBlueprint.ForEach(id => Console.Out.WriteLine($"{id}"));
             _isDigValid = false; // trying to connect to multiple rooms
             return;
         }
