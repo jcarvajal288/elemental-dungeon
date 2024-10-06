@@ -6,6 +6,7 @@ using MonogameTest.map.rooms;
 namespace MonogameTest.map;
 
 public abstract class Room() : Corridor {
+    public int EarthElementalPower { get; set; } = 0;
     
     protected Room(Vector2 topLeft, Vector2 bottomRight, int id, Terrain floorTerrain = Terrain.OrcFloor, Terrain wallTerrain = Terrain.OrcWall) : this() {
         TopLeft = topLeft;

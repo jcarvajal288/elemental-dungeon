@@ -22,7 +22,7 @@ public class Player(Vector2 position) {
             if (roomId == -1) {
                 Console.Out.WriteLine(map.GetCorridorForPosition(newPosition).GetConnectedRoomIds());
             } else {
-                Console.Out.WriteLine(roomId);
+                Console.Out.WriteLine("Earth: {0}", map.GetRoomForId(roomId).EarthElementalPower);
             }
             _position = newPosition;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonogameTest.map.rooms;
 using MonogameTest.player;
 
 namespace MonogameTest.map;
@@ -74,13 +75,14 @@ public class Map {
     public void AddCorridor(Corridor corridor) {
         _corridors.Add(corridor);
         CalculateRoomConnectionMatrix();
-        for (int i = 0; i < _roomConnectionMatrix.GetLength(0); i++) {
-            for (int j = 0; j < _roomConnectionMatrix.GetLength(1); j++) {
-                Console.Out.Write(_roomConnectionMatrix[i, j]);
-                Console.Out.Write(',');
-            }
-            Console.Out.Write('\n');
-        }
+        CalculateElementalPowersForRooms();
+        // for (int i = 0; i < _roomConnectionMatrix.GetLength(0); i++) {
+        //     for (int j = 0; j < _roomConnectionMatrix.GetLength(1); j++) {
+        //         Console.Out.Write(_roomConnectionMatrix[i, j]);
+        //         Console.Out.Write(',');
+        //     }
+        //     Console.Out.Write('\n');
+        // }
     }
 
     public int GetRoomIdForPosition(Vector2 position) {
@@ -128,6 +130,24 @@ public class Map {
 
     public int NextRoomId() {
         return _rooms.Count;
+    }
+
+    public void CalculateElementalPowersForRooms() {
+        foreach (Room room in _rooms.Values) {
+            room.EarthElementalPower = 0;
+        }
+
+        foreach (int roomId in _rooms.Keys) {
+            Room room = _rooms[roomId];
+            if (room.GetType() == typeof(EarthElementalFont)) {
+                room.EarthElementalPower += 1;
+                Enumerable.Range(0, _roomConnectionMatrix.GetLength(1))
+                    .Where(id => _roomConnectionMatrix[roomId, id] == 1).ToList()
+                    .ForEach(id => {
+                        _rooms[id].EarthElementalPower += 1;
+                    });
+            }
+        }
     }
 
     private void CalculateRoomConnectionMatrix() {
