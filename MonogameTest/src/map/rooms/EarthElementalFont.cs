@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using CommunityToolkit.HighPerformance.Enumerables;
 using Microsoft.Xna.Framework;
 
 namespace MonogameTest.map.rooms;
@@ -25,5 +28,14 @@ public class EarthElementalFont(
         Grid[down] = Tile.CreateBrownStoneWallTile();
         Grid[left] = Tile.CreateBrownStoneWallTile();
         Grid[right] = Tile.CreateBrownStoneWallTile();
+    }
+
+    public override void SpreadPower(Dictionary<int, Room> rooms, int[] roomDistances) {
+        EarthElementalPower += 1;
+        Enumerable.Range(0, roomDistances.Length)
+            .Where(id => roomDistances[id] == 1).ToList()
+            .ForEach(id => {
+                rooms[id].EarthElementalPower += 1;
+            });
     }
 }

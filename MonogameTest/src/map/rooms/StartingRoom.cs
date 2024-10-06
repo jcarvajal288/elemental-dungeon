@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace MonogameTest.map.rooms;
@@ -14,5 +15,8 @@ public class StartingRoom (
     Terrain.ReliefWall
 ) {
     protected override void FillRoom() {
+    }
+
+    public override void SpreadPower(Dictionary<int, Room> rooms, int[] roomDistances) {
     }
 }

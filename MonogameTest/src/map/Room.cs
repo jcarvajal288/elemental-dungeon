@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CommunityToolkit.HighPerformance.Enumerables;
 using Microsoft.Xna.Framework;
 using MonogameTest.map.rooms;
 
@@ -41,4 +42,6 @@ public abstract class Room() : Corridor {
     }
 
     protected abstract void FillRoom();
+
+    public abstract void SpreadPower(Dictionary<int, Room> rooms, int[] roomDistances);
 }
