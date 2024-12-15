@@ -5,13 +5,16 @@ namespace MonogameTest.map;
 public enum Terrain {
     BrownBrickWall,
     BrownStoneWall,
+    CrystalWallDarkGray,
     CrystalWallLightBlue,
+    CrystalWallLightGreen,
     CrystalWallLightRed,
+    CrystalWallWhite,
     MosaicFloor,
     LimestoneFloor,
     OrcFloor,
     OrcWall,
-    ReliefWall,
+    ReliefWall
 }
 
 public static class TerrainExtensions {
@@ -23,8 +26,11 @@ public static class TerrainExtensions {
 
     public static readonly List<Terrain> DiggableTerrain = [
         Terrain.OrcWall,
+        Terrain.CrystalWallDarkGray,
         Terrain.CrystalWallLightBlue,
+        Terrain.CrystalWallLightGreen,
         Terrain.CrystalWallLightRed,
+        Terrain.CrystalWallWhite
     ];
 }
     

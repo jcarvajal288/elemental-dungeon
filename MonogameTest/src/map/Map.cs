@@ -4,7 +4,6 @@ using System.Linq;
 using CommunityToolkit.HighPerformance;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonogameTest.map.rooms;
 using MonogameTest.player;
 
 namespace MonogameTest.map;
@@ -24,12 +23,23 @@ public class Map {
             _grid.Add([]);
             for (int x = 0; x < width; x++) {
                 if (rng.Next(0, 50) == 0) {
-                    _grid[y].Add(Tile.CreateCrystalWallLightBlueTile());
+                    _grid[y].Add(ChooseCrystalTile(rng.Next(0, 5)));
                 } else {
                     _grid[y].Add(Tile.CreateOrcWallTile());
                 }
             }
         }
+    }
+
+    private Tile ChooseCrystalTile(int tileIndex) {
+        return tileIndex switch {
+            0 => Tile.CreateCrystalWallDarkGrayTile(),
+            1 => Tile.CreateCrystalWallLightBlueTile(),
+            2 => Tile.CreateCrystalWallLightGreenTile(),
+            3 => Tile.CreateCrystalWallLightRedTile(),
+            4 => Tile.CreateCrystalWallWhiteTile(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     public void Draw(SpriteBatch spriteBatch) {

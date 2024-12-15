@@ -47,12 +47,24 @@ public class Tile(Terrain terrain, int spriteIndex) {
         return new Tile(Terrain.BrownStoneWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.BrownStoneWall].Count));
     }
 
+    public static Tile CreateCrystalWallDarkGrayTile() {
+        return new Tile(Terrain.CrystalWallDarkGray, 0);
+    }
+
     public static Tile CreateCrystalWallLightBlueTile() {
         return new Tile(Terrain.CrystalWallLightBlue, 0);
     }
     
+    public static Tile CreateCrystalWallLightGreenTile() {
+        return new Tile(Terrain.CrystalWallLightGreen, 0);
+    }
+    
     public static Tile CreateCrystalWallLightRedTile() {
         return new Tile(Terrain.CrystalWallLightRed, 0);
+    }
+
+    public static Tile CreateCrystalWallWhiteTile() {
+        return new Tile(Terrain.CrystalWallWhite, 0);
     }
 
     public static Tile CreateLimestoneFloorTile() {
@@ -74,5 +86,4 @@ public class Tile(Terrain terrain, int spriteIndex) {
     public static Tile CreateReliefWallTile() {
         return new Tile(Terrain.ReliefWall, Rng.Next(0, Images.TerrainSpriteSet[Terrain.ReliefWall].Count));
     }
-
 }

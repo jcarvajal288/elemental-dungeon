@@ -28,12 +28,24 @@ public static class Images {
                 LoadTexture(graphicsDevice, "Content/assets/terrain/brownStoneWall/stone_2_brown0.png")
             ]
         );
+        TerrainSpriteSet.Add(Terrain.CrystalWallDarkGray, [
+                LoadTexture(graphicsDevice, "Content/assets/terrain/crystals/crystal_wall_darkgray.png")
+            ]
+        );
         TerrainSpriteSet.Add(Terrain.CrystalWallLightBlue, [
                 LoadTexture(graphicsDevice, "Content/assets/terrain/crystals/crystal_wall_lightblue.png")
             ]
         );
+        TerrainSpriteSet.Add(Terrain.CrystalWallLightGreen, [
+                LoadTexture(graphicsDevice, "Content/assets/terrain/crystals/crystal_wall_lightgreen.png")
+            ]
+        );
         TerrainSpriteSet.Add(Terrain.CrystalWallLightRed, [
                 LoadTexture(graphicsDevice, "Content/assets/terrain/crystals/crystal_wall_lightred.png")
+            ]
+        );
+        TerrainSpriteSet.Add(Terrain.CrystalWallWhite, [
+                LoadTexture(graphicsDevice, "Content/assets/terrain/crystals/crystal_wall_white.png")
             ]
         );
         TerrainSpriteSet.Add(Terrain.LimestoneFloor, [
